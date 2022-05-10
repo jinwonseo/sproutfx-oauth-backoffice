@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: sproutfx-oauth-backoffice
+  profiles:
+    active: local
+  cloud:
+    config:
+      enabled: false
+#  config:
+#    import:
+#      - configserver:http://config.sproutfx.kr

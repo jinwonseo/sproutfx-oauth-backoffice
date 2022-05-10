@@ -1,0 +1,115 @@
+server:
+  port: 8181
+  servlet:
+    contextPath: /api/oauth-backoffice
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  output:
+    ansi:
+      enabled: always
+  devtools:
+    restart:
+      log-condition-evaluation-delta: false
+  rabbitmq:
+    host: sproutfx.kr # 127.0.0.1
+    port: 5672
+    username: sproutfx-oauth-backoffice
+    password: sproutfx-oauth-backoffice
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:sproutfx_oauth
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    open-in-view: false
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      org:
+        hibernate:
+          envers:
+            audit_table_suffix: _audit
+            store_data_at_delete: true
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 3
+    lease-expiration-duration-in-seconds: 10
+  client:
+    healthcheck:
+      enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 10
+    disable-delta: false
+    service-url:
+      defaultZone: http://discovery.sproutfx.kr/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    refresh:
+      enabled: true
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+
+sproutfx:
+  crypto:
+    key-store:
+      location: classpath:/keystore/sproutfx-oauth-backoffice.jks
+      alias: sproutfx-oauth-backoffice
+      secret: cGxhdGZvcm0tY29uZmln
+      password: cGxhdGZvcm0tY29uZmln
+  security:
+    authorization:
+      header: Authorization
+      type: Bearer
+      provider-code: b605d2a8058542cd888dc547f56768bc
+      client-code: 5e0f947f90e74061afb4f521d96b5170
+      access-token-secret: sOLpFJKe58kMKDtx4gutvj4444fqoMWmngouZQLFEy4qaKSMQRToRBUcKpG7mkRupVWOQJtopjW29QRGDtnKopvSIewlAVOW
+    web:
+      ignore:
+        patterns:
+          - '/actuator/**'
+          - '/configuration/ui'
+          - '/configuration/security'
+          - '/swagger-resources/**'
+          - '/swagger-ui.html'
+          - '/v3/api-docs'
+          - '/webjars/**'
+          - '/error'
+          - '/favicon'
+          - '/h2-console/**'
+    http:
+      authorize-requests:
+        permit-all:
+          patterns:
+            - '/swagger-ui/**'
+  logging:
+    identifier: sproutfx-oauth-authorization-local
+    logstash:
+      appender-name: LOGSTASH
+      async-appender-name: ASYNC_LOGSTASH
+      host: sproutfx.kr # 127.0.0.1
+      port: 5045
+      queue-size: 512
