@@ -18,6 +18,26 @@ spring:
     port: 5672
     username: sproutfx-oauth-backoffice
     password: sproutfx-oauth-backoffice
+#  datasource:
+#    url: jdbc:mariadb://mairadb.sproutfx.kr:3306/sproutfx_oauth?tinyInt1isBit=false
+#    driver-class-name: org.mariadb.jdbc.Driver
+#    username: sproutfx_oauth
+#    password: sproutfx_oauth
+#  jpa:
+#    open-in-view: false
+#    generate-ddl: true
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: validate #update
+#    properties:
+#      org:
+#        hibernate:
+#          envers:
+#            audit_table_suffix: _audit
+#            store_data_at_delete: true
+#      hibernate:
+#        format_sql: true
+
   h2:
     console:
       enabled: true
@@ -46,7 +66,7 @@ spring:
 
 eureka:
   instance:
-    instance-id: ${spring.application.name}:${server.port}
+    instance-id: ${random.uuid}
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 3
     lease-expiration-duration-in-seconds: 10
