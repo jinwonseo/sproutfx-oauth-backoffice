@@ -6,7 +6,7 @@ server:
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: test
   output:
     ansi:
       enabled: always
@@ -110,21 +110,12 @@ sproutfx:
     web:
       ignore:
         patterns:
-          - '/actuator/**'
-          - '/configuration/ui'
-          - '/configuration/security'
-          - '/swagger-resources/**'
-          - '/swagger-ui.html'
-          - '/v3/api-docs'
-          - '/webjars/**'
-          - '/error'
-          - '/favicon'
-          - '/h2-console/**'
+          - '/**'
     http:
       authorize-requests:
         permit-all:
           patterns:
-            - '/swagger-ui/**'
+            - '/**'
   logging:
     identifier: ${spring.application.name}-${spring.profiles.active}
     logstash:

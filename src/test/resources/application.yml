@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: sproutfx-oauth-backoffice
+  profiles:
+    active: test
+  cloud:
+    config:
+      enabled: false
