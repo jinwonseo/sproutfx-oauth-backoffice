@@ -123,7 +123,7 @@ class ClientControllerTest {
 
         // then
         perform.andDo(print())
-            .andExpect(status().isCreated())
+            .andExpect(status().isOk())
             .andExpect(jsonPath("succeeded").value(true))
             .andExpect(jsonPath("content.code").value(mockupClient1.getCode()))
             .andExpect(jsonPath("content.name").value(mockupClient1.getName()))
@@ -198,6 +198,8 @@ class ClientControllerTest {
 
         // then
         resultActions.andDo(print())
-            .andExpect(status().isNoContent());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("succeeded").value(true))
+            .andExpect(jsonPath("content.deletedClientId").value(mockupClient1.getId().toString()));
     }
 }

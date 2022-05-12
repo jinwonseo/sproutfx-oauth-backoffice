@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -176,7 +175,7 @@ class ProjectControllerTest {
 
         // then
         perform.andDo(print())
-            .andExpect(status().isCreated())
+            .andExpect(status().isOk())
             .andExpect(jsonPath("succeeded").value(true))
             .andExpect(jsonPath("content.name").value(mockupProject.getName()));
     }
@@ -259,6 +258,8 @@ class ProjectControllerTest {
 
         // then
         perform.andDo(print())
-            .andExpect(status().isNoContent());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("succeeded").value(true))
+            .andExpect(jsonPath("content.deletedProjectId").value(mockupProject.getId().toString()));
     }
 }
