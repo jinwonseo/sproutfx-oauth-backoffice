@@ -6,14 +6,12 @@ import kr.sproutfx.oauth.backoffice.api.member.service.MemberService;
 import kr.sproutfx.oauth.backoffice.common.base.BaseController;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
 import lombok.Data;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -30,36 +28,31 @@ public class MemberController extends BaseController {
     }
 
     @GetMapping
-    public ResponseEntity<StructuredBody<List<MemberResponse>>> findAll() {
+    public StructuredBody<List<MemberResponse>> findAll() {
 
-        return ResponseEntity.ok().body(StructuredBody.content(
-            this.memberService.findAll().stream().map(MemberResponse::new).collect(toList())));
+        return StructuredBody.content(
+            this.memberService.findAll().stream().map(MemberResponse::new).collect(toList()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StructuredBody<MemberResponse>> findById(@PathVariable UUID id) {
-
-        Member selectedMember = this.memberService.findById(id);
-
-        return ResponseEntity.ok().body(StructuredBody.content(
-            new MemberResponse(selectedMember)));
+    public StructuredBody<MemberResponse> findById(@PathVariable UUID id) {
+        return StructuredBody.content(
+            new MemberResponse(this.memberService.findById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<StructuredBody<MemberResponse>> create(@RequestBody @Validated MemberCreateRequest memberCreateRequest, Errors errors) {
+    public StructuredBody<MemberResponse> create(@RequestBody @Validated MemberCreateRequest memberCreateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
         UUID id = this.memberService.create(memberCreateRequest.getEmail(), memberCreateRequest.getName(), memberCreateRequest.getPassword(), memberCreateRequest.getDescription());
 
-        Member createdMember = this.memberService.findById(id);
-
-        return ResponseEntity.created(URI.create(String.format("/members/%s", id))).body(StructuredBody.content(
-            new MemberResponse(createdMember)));
+        return StructuredBody.content(
+            new MemberResponse(this.memberService.findById(id)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<StructuredBody<MemberResponse>> update(@PathVariable UUID id, @RequestBody @Validated MemberUpdateRequest memberUpdateRequest, Errors errors) {
+    public StructuredBody<MemberResponse> update(@PathVariable UUID id, @RequestBody @Validated MemberUpdateRequest memberUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -69,14 +62,12 @@ public class MemberController extends BaseController {
 
         this.memberService.update(id, email, name, description);
 
-        Member updatedMember = this.memberService.findById(id);
-
-        return ResponseEntity.ok().body(StructuredBody.content(
-            new MemberResponse(updatedMember)));
+        return StructuredBody.content(
+            new MemberResponse(this.memberService.findById(id)));
     }
 
     @PatchMapping(value = "/{id}/status")
-    public ResponseEntity<StructuredBody<MemberResponse>> updateStatus(@PathVariable UUID id, @RequestBody @Validated MemberStatusUpdateRequest memberStatusUpdateRequest, Errors errors) {
+    public StructuredBody<MemberResponse> updateStatus(@PathVariable UUID id, @RequestBody @Validated MemberStatusUpdateRequest memberStatusUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -84,14 +75,12 @@ public class MemberController extends BaseController {
 
         this.memberService.updateStatus(id, memberStatus);
 
-        Member updatedMember = this.memberService.findById(id);
-
-        return ResponseEntity.ok().body(StructuredBody.content(
-            new MemberResponse(updatedMember)));
+        return StructuredBody.content(
+            new MemberResponse(this.memberService.findById(id)));
     }
 
     @PatchMapping(value = "/{email}/password")
-    public ResponseEntity<StructuredBody<MemberResponse>> updatePassword(@PathVariable String email, @RequestBody @Validated MemberPasswordUpdateRequest memberPasswordUpdateRequest, Errors errors) {
+    public StructuredBody<MemberResponse> updatePassword(@PathVariable String email, @RequestBody @Validated MemberPasswordUpdateRequest memberPasswordUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -100,18 +89,17 @@ public class MemberController extends BaseController {
 
         UUID id = this.memberService.updatePassword(email, currentPassword, newPassword);
 
-        Member updatedMember = this.memberService.findById(id);
-
-        return ResponseEntity.ok().body(StructuredBody.content(
-            new MemberResponse(updatedMember)));
+        return StructuredBody.content(
+            new MemberResponse(this.memberService.findById(id)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@PathVariable UUID id) {
+    public StructuredBody<MemberDeleteResponse> delete(@PathVariable UUID id) {
 
         this.memberService.deleteById(id);
 
-        return ResponseEntity.noContent().build();
+        return StructuredBody.content(
+            new MemberDeleteResponse(id));
     }
 
     @Data
@@ -161,6 +149,15 @@ public class MemberController extends BaseController {
             this.passwordExpired = member.getPasswordExpired();
             this.status = (member.getStatus() == null) ? null : member.getStatus().toString();
             this.description = member.getDescription();
+        }
+    }
+
+    @Data
+    static class MemberDeleteResponse {
+        private UUID deletedMemberId;
+
+        public MemberDeleteResponse(UUID id) {
+            this.deletedMemberId = id;
         }
     }
 }

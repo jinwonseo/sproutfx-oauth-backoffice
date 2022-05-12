@@ -7,13 +7,11 @@ import kr.sproutfx.oauth.backoffice.api.project.service.ProjectService;
 import kr.sproutfx.oauth.backoffice.common.base.BaseController;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
 import lombok.Data;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
-import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,73 +27,65 @@ public class ProjectController extends BaseController {
     }
 
     @GetMapping
-    public ResponseEntity<StructuredBody<List<ProjectResponse>>> findAll() {
+    public StructuredBody<List<ProjectResponse>> findAll() {
 
-        return ResponseEntity.ok().body(StructuredBody.content(
-            this.projectService.findAll().stream().map(ProjectResponse::new).collect(toList())));
+        return StructuredBody.content(
+            this.projectService.findAll().stream().map(ProjectResponse::new).collect(toList()));
     }
 
     @GetMapping(value = "/clients")
-    public ResponseEntity<StructuredBody<List<ProjectWithClientsResponse>>> findAllWithClients() {
+    public StructuredBody<List<ProjectWithClientsResponse>> findAllWithClients() {
 
-        return ResponseEntity.ok().body(StructuredBody.content(
-            this.projectService.findAllWithClients().stream().map(ProjectWithClientsResponse::new).collect(toList())));
+        return StructuredBody.content(
+            this.projectService.findAllWithClients().stream().map(ProjectWithClientsResponse::new).collect(toList()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StructuredBody<ProjectResponse>> findById(@PathVariable UUID id) {
+    public StructuredBody<ProjectResponse> findById(@PathVariable UUID id) {
 
-        Project selectedProject = this.projectService.findById(id);
-
-        return ResponseEntity.ok().body(StructuredBody.content(
-            new ProjectResponse(selectedProject)));
+        return StructuredBody.content(
+            new ProjectResponse(this.projectService.findById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<StructuredBody<ProjectResponse>> create(@RequestBody @Validated ProjectCreateRequest projectCreateRequest, Errors errors) {
+    public StructuredBody<ProjectResponse> create(@RequestBody @Validated ProjectCreateRequest projectCreateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
         UUID id = this.projectService.create(projectCreateRequest.getName(), projectCreateRequest.getDescription());
 
-        Project selectedProject = this.projectService.findById(id);
-
-        return ResponseEntity.created(URI.create(String.format("/projects/%s", id))).body(StructuredBody.content(
-            new ProjectResponse(selectedProject)));
+        return StructuredBody.content(
+            new ProjectResponse(this.projectService.findById(id)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<StructuredBody<ProjectResponse>> update(@PathVariable UUID id, @RequestBody @Validated ProjectUpdateRequest projectUpdateRequest, Errors errors) {
+    public StructuredBody<ProjectResponse> update(@PathVariable UUID id, @RequestBody @Validated ProjectUpdateRequest projectUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
         this.projectService.update(id, projectUpdateRequest.getName(), projectUpdateRequest.getDescription());
 
-        Project selectedProject = this.projectService.findById(id);
-
-        return ResponseEntity.ok().body(StructuredBody.content(
-            new ProjectResponse(selectedProject)));
+        return StructuredBody.content(
+            new ProjectResponse(this.projectService.findById(id)));
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<StructuredBody<ProjectResponse>> updateStatus(@PathVariable UUID id, @RequestBody @Validated ProjectStatusUpdateRequest projectStatusUpdateRequest, Errors errors) {
+    public StructuredBody<ProjectResponse> updateStatus(@PathVariable UUID id, @RequestBody @Validated ProjectStatusUpdateRequest projectStatusUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
         this.projectService.updateStatus(id, projectStatusUpdateRequest.getProjectStatus());
 
-        Project selectedProject = this.projectService.findById(id);
-
-        return ResponseEntity.ok().body(StructuredBody.content(
-            new ProjectResponse(selectedProject)));
+        return StructuredBody.content(
+            new ProjectResponse(this.projectService.findById(id)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@PathVariable UUID id) {
+    public StructuredBody<ProjectDeleteResponse> delete(@PathVariable UUID id) {
 
         this.projectService.delete(id);
 
-        return ResponseEntity.noContent().build();
+        return StructuredBody.content(new ProjectDeleteResponse(id));
     }
 
     @Data
@@ -127,15 +117,6 @@ public class ProjectController extends BaseController {
             this.name = project.getName();
             this.status = project.getStatus().toString();
             this.description = project.getDescription();
-        }
-    }
-
-    @Data
-    static class ProjectDeleteResponse {
-        private UUID deletedProjectId;
-
-        public ProjectDeleteResponse(UUID deletedProjectId) {
-            this.deletedProjectId = deletedProjectId;
         }
     }
 
@@ -173,5 +154,13 @@ public class ProjectController extends BaseController {
     @Data
     static class ProjectStatusUpdateRequest {
         private ProjectStatus projectStatus;
+    }
+    @Data
+    static class ProjectDeleteResponse {
+        private UUID deletedProjectId;
+
+        public ProjectDeleteResponse(UUID id) {
+            this.deletedProjectId = id;
+        }
     }
 }

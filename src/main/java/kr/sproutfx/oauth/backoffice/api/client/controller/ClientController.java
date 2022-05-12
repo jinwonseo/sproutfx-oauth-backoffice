@@ -7,7 +7,6 @@ import kr.sproutfx.oauth.backoffice.common.base.BaseController;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
 import lombok.Data;
 import lombok.Getter;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,32 +31,30 @@ public class ClientController extends BaseController {
     }
 
     @GetMapping
-    public ResponseEntity<StructuredBody<List<ClientResponse>>> findAll() {
-        return ResponseEntity.ok().body(StructuredBody.content(
-            this.clientService.findAll().stream().map(ClientResponse::new).collect(toList())));
+    public StructuredBody<List<ClientResponse>> findAll() {
+        return StructuredBody.content(
+            this.clientService.findAll().stream().map(ClientResponse::new).collect(toList()));
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<StructuredBody<ClientResponse>> findById(@PathVariable("id") UUID id) {
-        Client selectedClient = this.clientService.findById(id);
-
-        return ResponseEntity.ok().body(StructuredBody.content(new ClientResponse(selectedClient)));
+    public StructuredBody<ClientResponse> findById(@PathVariable("id") UUID id) {
+        return StructuredBody.content(
+            new ClientResponse(this.clientService.findById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<StructuredBody<ClientResponse>> create(@RequestBody @Validated ClientCreateRequest clientCreateRequest, Errors errors) {
+    public StructuredBody<ClientResponse> create(@RequestBody @Validated ClientCreateRequest clientCreateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
         UUID id = this.clientService.create(clientCreateRequest.getName(), clientCreateRequest.getDescription());
 
-        Client updatedClient = this.clientService.findById(id);
-
-        return ResponseEntity.created(URI.create(String.format("/clients/%s", id))).body(StructuredBody.content(new ClientResponse(updatedClient)));
+        return StructuredBody.content(
+            new ClientResponse(this.clientService.findById(id)));
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<StructuredBody<ClientResponse>> update(@PathVariable UUID id, @RequestBody @Validated ClientUpdateRequest clientUpdateRequest, Errors errors) {
+    public StructuredBody<ClientResponse> update(@PathVariable UUID id, @RequestBody @Validated ClientUpdateRequest clientUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -69,27 +65,26 @@ public class ClientController extends BaseController {
 
         this.clientService.update(id, name, accessTokenValidityInSeconds, description);
 
-        Client updatedClient = this.clientService.findById(id);
-
-        return ResponseEntity.ok().body(StructuredBody.content(new ClientResponse(updatedClient)));
+        return StructuredBody.content(
+            new ClientResponse(this.clientService.findById(id)));
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<StructuredBody<ClientResponse>> updateStatus(@PathVariable UUID id, @RequestBody ClientStatusUpdateRequest clientStatusUpdateRequest) {
+    public StructuredBody<ClientResponse> updateStatus(@PathVariable UUID id, @RequestBody ClientStatusUpdateRequest clientStatusUpdateRequest) {
 
         this.clientService.updateStatus(id, clientStatusUpdateRequest.getClientStatus());
 
-        Client updatedClient = this.clientService.findById(id);
-
-        return ResponseEntity.ok().body(StructuredBody.content(new ClientResponse(updatedClient)));
+        return StructuredBody.content(
+            new ClientResponse(this.clientService.findById(id)));
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Object> delete(@PathVariable UUID id) {
+    public StructuredBody<ClientDeleteResponse> delete(@PathVariable UUID id) {
 
         this.clientService.deleteById(id);
 
-        return ResponseEntity.noContent().build();
+        return StructuredBody.content(
+            new ClientDeleteResponse(id));
     }
 
     @Getter
@@ -129,5 +124,14 @@ public class ClientController extends BaseController {
     @Data
     static class ClientStatusUpdateRequest {
         private ClientStatus clientStatus;
+    }
+
+    @Data
+    static class ClientDeleteResponse {
+        private final UUID deletedClientId;
+
+        public ClientDeleteResponse(UUID id) {
+            this.deletedClientId = id;
+        }
     }
 }

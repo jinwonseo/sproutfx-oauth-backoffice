@@ -104,7 +104,7 @@ class MemberControllerTest {
 
         // then
         perform.andDo(print())
-            .andExpect(status().isCreated())
+            .andExpect(status().isOk())
             .andExpect(jsonPath("succeeded").value(true))
             .andExpect(jsonPath("content.name").value(mockupMember.getName()));
     }
@@ -117,7 +117,8 @@ class MemberControllerTest {
             .characterEncoding(StandardCharsets.UTF_8));
         // then
         perform.andDo(print())
-            .andExpect(status().isNoContent());
+            .andExpect(jsonPath("succeeded").value(true))
+            .andExpect(jsonPath("content.deletedMemberId").value(mockupMember.getId().toString()));
     }
 
     @Test
