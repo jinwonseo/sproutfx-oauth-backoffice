@@ -4,7 +4,6 @@ import kr.sproutfx.oauth.backoffice.api.member.entity.Member;
 import kr.sproutfx.oauth.backoffice.api.member.enumeration.MemberStatus;
 import kr.sproutfx.oauth.backoffice.api.member.service.MemberCommandService;
 import kr.sproutfx.oauth.backoffice.api.member.service.MemberQueryService;
-import kr.sproutfx.oauth.backoffice.api.member.service.MemberService;
 import kr.sproutfx.oauth.backoffice.common.base.BaseController;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
 import lombok.Data;
