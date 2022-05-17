@@ -2,11 +2,14 @@ package kr.sproutfx.oauth.backoffice.api.client.controller;
 
 import kr.sproutfx.oauth.backoffice.api.client.entity.Client;
 import kr.sproutfx.oauth.backoffice.api.client.enumeration.ClientStatus;
-import kr.sproutfx.oauth.backoffice.api.client.service.ClientService;
+import kr.sproutfx.oauth.backoffice.api.client.service.ClientCommandService;
+import kr.sproutfx.oauth.backoffice.api.client.service.ClientQueryService;
 import kr.sproutfx.oauth.backoffice.common.base.BaseController;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,25 +24,28 @@ import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/clients")
-@Validated
 public class ClientController extends BaseController {
 
-    private final ClientService clientService;
+    private final ClientCommandService clientCommandService;
+    private final ClientQueryService clientQueryService;
 
-    public ClientController(ClientService clientService) {
-        this.clientService = clientService;
+    public ClientController(ClientCommandService clientCommandService, ClientQueryService clientQueryService) {
+        this.clientCommandService = clientCommandService;
+        this.clientQueryService = clientQueryService;
     }
 
     @GetMapping
     public StructuredBody<List<ClientResponse>> findAll() {
+
         return StructuredBody.content(
-            this.clientService.findAll().stream().map(ClientResponse::new).collect(toList()));
+            this.clientQueryService.findAll().stream().map(ClientResponse::new).collect(toList()));
     }
 
     @GetMapping(value = "/{id}")
     public StructuredBody<ClientResponse> findById(@PathVariable("id") UUID id) {
+
         return StructuredBody.content(
-            new ClientResponse(this.clientService.findById(id)));
+            new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @PostMapping
@@ -47,10 +53,10 @@ public class ClientController extends BaseController {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
-        UUID id = this.clientService.create(clientCreateRequest.getName(), clientCreateRequest.getDescription());
+        UUID id = this.clientCommandService.create(clientCreateRequest.getName(), clientCreateRequest.getDescription());
 
         return StructuredBody.content(
-            new ClientResponse(this.clientService.findById(id)));
+            new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @PutMapping(value = "/{id}")
@@ -63,25 +69,25 @@ public class ClientController extends BaseController {
 
         String description = clientUpdateRequest.getDescription();
 
-        this.clientService.update(id, name, accessTokenValidityInSeconds, description);
+        this.clientCommandService.update(id, name, accessTokenValidityInSeconds, description);
 
         return StructuredBody.content(
-            new ClientResponse(this.clientService.findById(id)));
+            new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @PatchMapping("/{id}/status")
     public StructuredBody<ClientResponse> updateStatus(@PathVariable UUID id, @RequestBody ClientStatusUpdateRequest clientStatusUpdateRequest) {
 
-        this.clientService.updateStatus(id, clientStatusUpdateRequest.getClientStatus());
+        this.clientCommandService.updateStatus(id, clientStatusUpdateRequest.getClientStatus());
 
         return StructuredBody.content(
-            new ClientResponse(this.clientService.findById(id)));
+            new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @DeleteMapping(value = "/{id}")
     public StructuredBody<ClientDeleteResponse> delete(@PathVariable UUID id) {
 
-        this.clientService.deleteById(id);
+        this.clientCommandService.deleteById(id);
 
         return StructuredBody.content(
             new ClientDeleteResponse(id));

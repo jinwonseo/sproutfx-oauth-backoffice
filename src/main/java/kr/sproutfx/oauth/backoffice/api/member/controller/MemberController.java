@@ -2,7 +2,8 @@ package kr.sproutfx.oauth.backoffice.api.member.controller;
 
 import kr.sproutfx.oauth.backoffice.api.member.entity.Member;
 import kr.sproutfx.oauth.backoffice.api.member.enumeration.MemberStatus;
-import kr.sproutfx.oauth.backoffice.api.member.service.MemberService;
+import kr.sproutfx.oauth.backoffice.api.member.service.MemberCommandService;
+import kr.sproutfx.oauth.backoffice.api.member.service.MemberQueryService;
 import kr.sproutfx.oauth.backoffice.common.base.BaseController;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
 import lombok.Data;
@@ -21,23 +22,25 @@ import static java.util.stream.Collectors.toList;
 @RestController
 @RequestMapping(value = "/members")
 public class MemberController extends BaseController {
-    private final MemberService memberService;
+    private final MemberCommandService memberCommandService;
+    private final MemberQueryService memberQueryService;
 
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
+    public MemberController(MemberCommandService memberCommandService, MemberQueryService memberQueryService) {
+        this.memberCommandService = memberCommandService;
+        this.memberQueryService = memberQueryService;
     }
 
     @GetMapping
     public StructuredBody<List<MemberResponse>> findAll() {
 
         return StructuredBody.content(
-            this.memberService.findAll().stream().map(MemberResponse::new).collect(toList()));
+            this.memberQueryService.findAll().stream().map(MemberResponse::new).collect(toList()));
     }
 
     @GetMapping("/{id}")
     public StructuredBody<MemberResponse> findById(@PathVariable UUID id) {
         return StructuredBody.content(
-            new MemberResponse(this.memberService.findById(id)));
+            new MemberResponse(this.memberQueryService.findById(id)));
     }
 
     @PostMapping
@@ -45,10 +48,10 @@ public class MemberController extends BaseController {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
-        UUID id = this.memberService.create(memberCreateRequest.getEmail(), memberCreateRequest.getName(), memberCreateRequest.getPassword(), memberCreateRequest.getDescription());
+        UUID id = this.memberCommandService.create(memberCreateRequest.getEmail(), memberCreateRequest.getName(), memberCreateRequest.getPassword(), memberCreateRequest.getDescription());
 
         return StructuredBody.content(
-            new MemberResponse(this.memberService.findById(id)));
+            new MemberResponse(this.memberQueryService.findById(id)));
     }
 
     @PutMapping("/{id}")
@@ -60,10 +63,10 @@ public class MemberController extends BaseController {
         String name = memberUpdateRequest.getName();
         String description = memberUpdateRequest.getDescription();
 
-        this.memberService.update(id, email, name, description);
+        this.memberCommandService.update(id, email, name, description);
 
         return StructuredBody.content(
-            new MemberResponse(this.memberService.findById(id)));
+            new MemberResponse(this.memberQueryService.findById(id)));
     }
 
     @PatchMapping(value = "/{id}/status")
@@ -73,10 +76,10 @@ public class MemberController extends BaseController {
 
         MemberStatus memberStatus = memberStatusUpdateRequest.getMemberStatus();
 
-        this.memberService.updateStatus(id, memberStatus);
+        this.memberCommandService.updateStatus(id, memberStatus);
 
         return StructuredBody.content(
-            new MemberResponse(this.memberService.findById(id)));
+            new MemberResponse(this.memberQueryService.findById(id)));
     }
 
     @PatchMapping(value = "/{email}/password")
@@ -87,16 +90,16 @@ public class MemberController extends BaseController {
         String currentPassword = memberPasswordUpdateRequest.getCurrentPassword();
         String newPassword = memberPasswordUpdateRequest.getNewPassword();
 
-        UUID id = this.memberService.updatePassword(email, currentPassword, newPassword);
+        UUID id = this.memberCommandService.updatePassword(email, currentPassword, newPassword);
 
         return StructuredBody.content(
-            new MemberResponse(this.memberService.findById(id)));
+            new MemberResponse(this.memberQueryService.findById(id)));
     }
 
     @DeleteMapping("/{id}")
     public StructuredBody<MemberDeleteResponse> delete(@PathVariable UUID id) {
 
-        this.memberService.deleteById(id);
+        this.memberCommandService.deleteById(id);
 
         return StructuredBody.content(
             new MemberDeleteResponse(id));
