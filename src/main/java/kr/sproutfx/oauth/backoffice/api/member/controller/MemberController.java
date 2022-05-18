@@ -31,20 +31,20 @@ public class MemberController extends BaseController {
     }
 
     @GetMapping
-    public StructuredBody<List<MemberResponse>> findAll() {
+    public StructuredBody findAll() {
 
         return StructuredBody.content(
             this.memberQueryService.findAll().stream().map(MemberResponse::new).collect(toList()));
     }
 
     @GetMapping("/{id}")
-    public StructuredBody<MemberResponse> findById(@PathVariable UUID id) {
+    public StructuredBody findById(@PathVariable UUID id) {
         return StructuredBody.content(
             new MemberResponse(this.memberQueryService.findById(id)));
     }
 
     @PostMapping
-    public StructuredBody<MemberResponse> create(@RequestBody @Validated MemberCreateRequest memberCreateRequest, Errors errors) {
+    public StructuredBody create(@RequestBody @Validated MemberCreateRequest memberCreateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -55,7 +55,7 @@ public class MemberController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public StructuredBody<MemberResponse> update(@PathVariable UUID id, @RequestBody @Validated MemberUpdateRequest memberUpdateRequest, Errors errors) {
+    public StructuredBody update(@PathVariable UUID id, @RequestBody @Validated MemberUpdateRequest memberUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -70,7 +70,7 @@ public class MemberController extends BaseController {
     }
 
     @PatchMapping(value = "/{id}/status")
-    public StructuredBody<MemberResponse> updateStatus(@PathVariable UUID id, @RequestBody @Validated MemberStatusUpdateRequest memberStatusUpdateRequest, Errors errors) {
+    public StructuredBody updateStatus(@PathVariable UUID id, @RequestBody @Validated MemberStatusUpdateRequest memberStatusUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -83,7 +83,7 @@ public class MemberController extends BaseController {
     }
 
     @PatchMapping(value = "/{email}/password")
-    public StructuredBody<MemberResponse> updatePassword(@PathVariable String email, @RequestBody @Validated MemberPasswordUpdateRequest memberPasswordUpdateRequest, Errors errors) {
+    public StructuredBody updatePassword(@PathVariable String email, @RequestBody @Validated MemberPasswordUpdateRequest memberPasswordUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -97,7 +97,7 @@ public class MemberController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    public StructuredBody<MemberDeleteResponse> delete(@PathVariable UUID id) {
+    public StructuredBody delete(@PathVariable UUID id) {
 
         this.memberCommandService.deleteById(id);
 

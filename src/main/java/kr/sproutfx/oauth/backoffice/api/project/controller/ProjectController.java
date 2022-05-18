@@ -30,28 +30,28 @@ public class ProjectController extends BaseController {
     }
 
     @GetMapping
-    public StructuredBody<List<ProjectResponse>> findAll() {
+    public StructuredBody findAll() {
 
         return StructuredBody.content(
             this.projectQueryService.findAll().stream().map(ProjectResponse::new).collect(toList()));
     }
 
     @GetMapping(value = "/clients")
-    public StructuredBody<List<ProjectWithClientsResponse>> findAllWithClients() {
+    public StructuredBody findAllWithClients() {
 
         return StructuredBody.content(
             this.projectQueryService.findAllWithClients().stream().map(ProjectWithClientsResponse::new).collect(toList()));
     }
 
     @GetMapping("/{id}")
-    public StructuredBody<ProjectResponse> findById(@PathVariable UUID id) {
+    public StructuredBody findById(@PathVariable UUID id) {
 
         return StructuredBody.content(
             new ProjectResponse(this.projectQueryService.findById(id)));
     }
 
     @PostMapping
-    public StructuredBody<ProjectResponse> create(@RequestBody @Validated ProjectCreateRequest projectCreateRequest, Errors errors) {
+    public StructuredBody create(@RequestBody @Validated ProjectCreateRequest projectCreateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -62,7 +62,7 @@ public class ProjectController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public StructuredBody<ProjectResponse> update(@PathVariable UUID id, @RequestBody @Validated ProjectUpdateRequest projectUpdateRequest, Errors errors) {
+    public StructuredBody update(@PathVariable UUID id, @RequestBody @Validated ProjectUpdateRequest projectUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -73,7 +73,7 @@ public class ProjectController extends BaseController {
     }
 
     @PatchMapping("/{id}/status")
-    public StructuredBody<ProjectResponse> updateStatus(@PathVariable UUID id, @RequestBody @Validated ProjectStatusUpdateRequest projectStatusUpdateRequest, Errors errors) {
+    public StructuredBody updateStatus(@PathVariable UUID id, @RequestBody @Validated ProjectStatusUpdateRequest projectStatusUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -84,7 +84,7 @@ public class ProjectController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    public StructuredBody<ProjectDeleteResponse> delete(@PathVariable UUID id) {
+    public StructuredBody delete(@PathVariable UUID id) {
 
         this.projectCommandService.delete(id);
 
