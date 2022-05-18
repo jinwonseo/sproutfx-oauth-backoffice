@@ -35,21 +35,21 @@ public class ClientController extends BaseController {
     }
 
     @GetMapping
-    public StructuredBody<List<ClientResponse>> findAll() {
+    public StructuredBody findAll() {
 
         return StructuredBody.content(
             this.clientQueryService.findAll().stream().map(ClientResponse::new).collect(toList()));
     }
 
     @GetMapping(value = "/{id}")
-    public StructuredBody<ClientResponse> findById(@PathVariable("id") UUID id) {
+    public StructuredBody findById(@PathVariable("id") UUID id) {
 
         return StructuredBody.content(
             new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @PostMapping
-    public StructuredBody<ClientResponse> create(@RequestBody @Validated ClientCreateRequest clientCreateRequest, Errors errors) {
+    public StructuredBody create(@RequestBody @Validated ClientCreateRequest clientCreateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -60,7 +60,7 @@ public class ClientController extends BaseController {
     }
 
     @PutMapping(value = "/{id}")
-    public StructuredBody<ClientResponse> update(@PathVariable UUID id, @RequestBody @Validated ClientUpdateRequest clientUpdateRequest, Errors errors) {
+    public StructuredBody update(@PathVariable UUID id, @RequestBody @Validated ClientUpdateRequest clientUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -76,7 +76,7 @@ public class ClientController extends BaseController {
     }
 
     @PatchMapping("/{id}/status")
-    public StructuredBody<ClientResponse> updateStatus(@PathVariable UUID id, @RequestBody ClientStatusUpdateRequest clientStatusUpdateRequest) {
+    public StructuredBody updateStatus(@PathVariable UUID id, @RequestBody ClientStatusUpdateRequest clientStatusUpdateRequest) {
 
         this.clientCommandService.updateStatus(id, clientStatusUpdateRequest.getClientStatus());
 
@@ -85,7 +85,7 @@ public class ClientController extends BaseController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public StructuredBody<ClientDeleteResponse> delete(@PathVariable UUID id) {
+    public StructuredBody delete(@PathVariable UUID id) {
 
         this.clientCommandService.deleteById(id);
 
