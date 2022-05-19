@@ -7,7 +7,6 @@ import kr.sproutfx.oauth.backoffice.api.client.service.ClientQueryService;
 import kr.sproutfx.oauth.backoffice.common.base.BaseController;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
 import lombok.Data;
-import lombok.Getter;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,15 +33,13 @@ public class ClientController extends BaseController {
     @GetMapping
     public StructuredBody findAll() {
 
-        return StructuredBody.content(
-            this.clientQueryService.findAll().stream().map(ClientResponse::new).collect(toList()));
+        return StructuredBody.content(this.clientQueryService.findAll().stream().map(ClientResponse::new).collect(toList()));
     }
 
     @GetMapping(value = "/{id}")
     public StructuredBody findById(@PathVariable("id") UUID id) {
 
-        return StructuredBody.content(
-            new ClientResponse(this.clientQueryService.findById(id)));
+        return StructuredBody.content(new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @PostMapping
@@ -52,8 +49,7 @@ public class ClientController extends BaseController {
 
         UUID id = this.clientCommandService.create(clientCreateRequest.getName(), clientCreateRequest.getDescription());
 
-        return StructuredBody.content(
-            new ClientResponse(this.clientQueryService.findById(id)));
+        return StructuredBody.content(new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @PutMapping(value = "/{id}")
@@ -68,8 +64,7 @@ public class ClientController extends BaseController {
 
         this.clientCommandService.update(id, name, accessTokenValidityInSeconds, description);
 
-        return StructuredBody.content(
-            new ClientResponse(this.clientQueryService.findById(id)));
+        return StructuredBody.content(new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @PatchMapping("/{id}/status")
@@ -77,8 +72,7 @@ public class ClientController extends BaseController {
 
         this.clientCommandService.updateStatus(id, clientStatusUpdateRequest.getClientStatus());
 
-        return StructuredBody.content(
-            new ClientResponse(this.clientQueryService.findById(id)));
+        return StructuredBody.content(new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @DeleteMapping(value = "/{id}")
@@ -86,12 +80,11 @@ public class ClientController extends BaseController {
 
         this.clientCommandService.deleteById(id);
 
-        return StructuredBody.content(
-            new ClientDeleteResponse(id));
+        return StructuredBody.content(new ClientDeleteResponse(id));
     }
 
-    @Getter
-    static class ClientResponse {
+    @Data
+    private static class ClientResponse {
         private final UUID id;
         private final String code;
         private final String name;
@@ -108,14 +101,14 @@ public class ClientController extends BaseController {
     }
 
     @Data
-    static class ClientCreateRequest {
+    private static class ClientCreateRequest {
         @NotBlank
         private String name;
         private String description;
     }
 
     @Data
-    static class ClientUpdateRequest {
+    private static class ClientUpdateRequest {
         @NotBlank
         private String name;
         @Min(3600)
@@ -125,12 +118,12 @@ public class ClientController extends BaseController {
     }
 
     @Data
-    static class ClientStatusUpdateRequest {
+    private static class ClientStatusUpdateRequest {
         private ClientStatus clientStatus;
     }
 
     @Data
-    static class ClientDeleteResponse {
+    private static class ClientDeleteResponse {
         private final UUID deletedClientId;
 
         public ClientDeleteResponse(UUID id) {

@@ -31,6 +31,10 @@ public class ClientQueryService {
         return this.clientRepository.findByCodeWithProject(code).orElseThrow(ClientNotFoundException::new);
     }
 
+    public Client findBySecretWithProject(String secret) {
+        return this.clientRepository.findBySecretWithProject(secret).orElseThrow(ClientNotFoundException::new);
+    }
+
     public Client findByCode(String code) {
         return this.clientRepository.findOne(ClientSpecification.equalCode(code)).orElseThrow(ClientNotFoundException::new);
     }

@@ -17,17 +17,24 @@ public class ClientAuthorizeController extends BaseController {
         this.clientQueryService = clientQueryService;
     }
 
-    @GetMapping
+    @GetMapping(params = {"client-code"})
     public ClientResponse findByCode(@RequestHeader("provider-code") String providerCode, @RequestParam(value = "client-code") String code) {
         return new ClientResponse(this.clientQueryService.findByCodeWithProject(code));
     }
 
+    @GetMapping(params = {"client-secret"})
+    public ClientResponse findBySecret(@RequestHeader("provider-code") String providerCode, @RequestParam(value = "client-secret") String secret) {
+        return new ClientResponse(this.clientQueryService.findBySecretWithProject(secret));
+    }
+
     @Data
-    private class ClientResponse {
+    private static class ClientResponse {
         private final UUID id;
         private final String code;
         private final String name;
         private final String secret;
+        private final String accessTokenSecret;
+        private final Long accessTokenValidityInSeconds;
         private final String status;
         private final String description;
 
@@ -38,6 +45,8 @@ public class ClientAuthorizeController extends BaseController {
             this.code = client.getCode();
             this.name = client.getName();
             this.secret = client.getSecret();
+            this.accessTokenSecret = client.getAccessTokenSecret();
+            this.accessTokenValidityInSeconds = client.getAccessTokenValidityInSeconds();
             this.status = (client.getStatus() == null) ? null : client.getStatus().toString();
             this.description = client.getDescription();
 

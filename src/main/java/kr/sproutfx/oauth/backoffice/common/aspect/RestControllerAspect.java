@@ -69,10 +69,7 @@ public class RestControllerAspect {
 
     private final Logger logger = LoggerFactory.getLogger(RestControllerAspect.class);
 
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)"
-        + " || @annotation(org.springframework.web.bind.annotation.PostMapping)"
-        + " || @annotation(org.springframework.web.bind.annotation.PutMapping)"
-        + " || @annotation(org.springframework.web.bind.annotation.DeleteMapping)")
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)" + " || @annotation(org.springframework.web.bind.annotation.PostMapping)" + " || @annotation(org.springframework.web.bind.annotation.PutMapping)" + " || @annotation(org.springframework.web.bind.annotation.DeleteMapping)")
     private void onRequest() { /* Rest Controller Pointcut */ }
 
     @Around("onRequest()")

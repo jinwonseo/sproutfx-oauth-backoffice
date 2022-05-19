@@ -32,14 +32,12 @@ public class MemberController extends BaseController {
     @GetMapping
     public StructuredBody findAll() {
 
-        return StructuredBody.content(
-            this.memberQueryService.findAll().stream().map(MemberResponse::new).collect(toList()));
+        return StructuredBody.content(this.memberQueryService.findAll().stream().map(MemberResponse::new).collect(toList()));
     }
 
     @GetMapping("/{id}")
     public StructuredBody findById(@PathVariable UUID id) {
-        return StructuredBody.content(
-            new MemberResponse(this.memberQueryService.findById(id)));
+        return StructuredBody.content(new MemberResponse(this.memberQueryService.findById(id)));
     }
 
     @PostMapping
@@ -49,8 +47,7 @@ public class MemberController extends BaseController {
 
         UUID id = this.memberCommandService.create(memberCreateRequest.getEmail(), memberCreateRequest.getName(), memberCreateRequest.getPassword(), memberCreateRequest.getDescription());
 
-        return StructuredBody.content(
-            new MemberResponse(this.memberQueryService.findById(id)));
+        return StructuredBody.content(new MemberResponse(this.memberQueryService.findById(id)));
     }
 
     @PutMapping("/{id}")
@@ -64,8 +61,7 @@ public class MemberController extends BaseController {
 
         this.memberCommandService.update(id, email, name, description);
 
-        return StructuredBody.content(
-            new MemberResponse(this.memberQueryService.findById(id)));
+        return StructuredBody.content(new MemberResponse(this.memberQueryService.findById(id)));
     }
 
     @PatchMapping(value = "/{id}/status")
@@ -77,8 +73,7 @@ public class MemberController extends BaseController {
 
         this.memberCommandService.updateStatus(id, memberStatus);
 
-        return StructuredBody.content(
-            new MemberResponse(this.memberQueryService.findById(id)));
+        return StructuredBody.content(new MemberResponse(this.memberQueryService.findById(id)));
     }
 
     @PatchMapping(value = "/{email}/password")
@@ -91,8 +86,7 @@ public class MemberController extends BaseController {
 
         UUID id = this.memberCommandService.updatePassword(email, currentPassword, newPassword);
 
-        return StructuredBody.content(
-            new MemberResponse(this.memberQueryService.findById(id)));
+        return StructuredBody.content(new MemberResponse(this.memberQueryService.findById(id)));
     }
 
     @DeleteMapping("/{id}")
@@ -100,12 +94,11 @@ public class MemberController extends BaseController {
 
         this.memberCommandService.deleteById(id);
 
-        return StructuredBody.content(
-            new MemberDeleteResponse(id));
+        return StructuredBody.content(new MemberDeleteResponse(id));
     }
 
     @Data
-    static class MemberCreateRequest {
+    private static class MemberCreateRequest {
         @Email
         private String email;
         @NotBlank
@@ -116,7 +109,7 @@ public class MemberController extends BaseController {
     }
 
     @Data
-    static class MemberUpdateRequest {
+    private static class MemberUpdateRequest {
         @Email
         private String email;
         @NotBlank
@@ -125,18 +118,18 @@ public class MemberController extends BaseController {
     }
 
     @Data
-    static class MemberPasswordUpdateRequest {
+    private static class MemberPasswordUpdateRequest {
         private String currentPassword;
         private String newPassword;
     }
 
     @Data
-    static class MemberStatusUpdateRequest {
+    private static class MemberStatusUpdateRequest {
         private MemberStatus memberStatus;
     }
 
     @Data
-    static class MemberResponse {
+    private static class MemberResponse {
         private final UUID id;
         private final String email;
         private final String name;
@@ -155,7 +148,7 @@ public class MemberController extends BaseController {
     }
 
     @Data
-    static class MemberDeleteResponse {
+    private static class MemberDeleteResponse {
         private UUID deletedMemberId;
 
         public MemberDeleteResponse(UUID id) {

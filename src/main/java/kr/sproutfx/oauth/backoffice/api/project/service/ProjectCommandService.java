@@ -19,11 +19,7 @@ public class ProjectCommandService {
     }
 
     public UUID create(String name, String description) {
-        Project persistenceProject = this.projectRepository.save(Project.builder()
-            .name(name)
-            .description(description)
-            .status(ProjectStatus.PENDING_APPROVAL)
-            .build());
+        Project persistenceProject = this.projectRepository.save(Project.builder().name(name).description(description).status(ProjectStatus.PENDING_APPROVAL).build());
 
         return persistenceProject.getId();
     }

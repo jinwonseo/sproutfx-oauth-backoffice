@@ -11,4 +11,7 @@ import java.util.UUID;
 public interface ClientRepository extends JpaRepository<Client, UUID>, JpaSpecificationExecutor<Client> {
     @Query(value = "SELECT distinct c FROM Client c left join fetch c.project p WHERE c.code = ?1")
     Optional<Client> findByCodeWithProject(String code);
+
+    @Query(value = "SELECT distinct c FROM Client c left join fetch c.project p WHERE c.secret = ?1")
+    Optional<Client> findBySecretWithProject(String secret);
 }
