@@ -92,7 +92,7 @@ public class ProjectController extends BaseController {
     }
 
     @Data
-    static class ProjectWithClientsResponse {
+    private static class ProjectWithClientsResponse {
         private final UUID id;
         private final String name;
         private final String status;
@@ -109,7 +109,7 @@ public class ProjectController extends BaseController {
     }
 
     @Data
-    static class ProjectResponse {
+    private static class ProjectResponse {
         private final UUID id;
         private final String name;
         private final String status;
