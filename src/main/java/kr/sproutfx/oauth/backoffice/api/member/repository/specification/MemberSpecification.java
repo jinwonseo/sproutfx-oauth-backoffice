@@ -9,6 +9,6 @@ public class MemberSpecification {
     }
 
     public static Specification<Member> equalEmail(String email) {
-        return (Specification<Member>) ((root, query, builder) -> builder.equal(root.get("email"), email));
+        return ((root, query, builder) -> builder.equal(root.get("email"), email));
     }
 }

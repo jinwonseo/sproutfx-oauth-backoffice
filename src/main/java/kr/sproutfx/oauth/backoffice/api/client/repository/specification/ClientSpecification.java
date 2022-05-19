@@ -9,10 +9,10 @@ public class ClientSpecification {
     }
 
     public static Specification<Client> equalCode(String code) {
-        return (Specification<Client>) ((root, query, builder) -> builder.equal(root.get("code"), code));
+        return ((root, query, builder) -> builder.equal(root.get("code"), code));
     }
 
     public static Specification<Client> equalSecret(String secret) {
-        return (Specification<Client>) ((root, query, builder) -> builder.equal(root.get("secret"), secret));
+        return ((root, query, builder) -> builder.equal(root.get("secret"), secret));
     }
 }

@@ -23,16 +23,7 @@ public class ClientCommandService {
 
     public UUID create(String name, String description) {
 
-        Client persistenceClient = this.clientRepository.save(
-            Client.builder()
-                .code(UUID.randomUUID().toString().replace("-", StringUtils.EMPTY))
-                .name(name)
-                .secret(Base64Utils.encodeToUrlSafeString(RandomStringUtils.randomAlphanumeric(32).getBytes()))
-                .status(ClientStatus.PENDING_APPROVAL)
-                .accessTokenSecret(RandomStringUtils.randomAlphanumeric(96))
-                .accessTokenValidityInSeconds(7200L)
-                .description(description)
-                .build());
+        Client persistenceClient = this.clientRepository.save(Client.builder().code(UUID.randomUUID().toString().replace("-", StringUtils.EMPTY)).name(name).secret(Base64Utils.encodeToUrlSafeString(RandomStringUtils.randomAlphanumeric(32).getBytes())).status(ClientStatus.PENDING_APPROVAL).accessTokenSecret(RandomStringUtils.randomAlphanumeric(96)).accessTokenValidityInSeconds(7200L).description(description).build());
 
         return persistenceClient.getId();
     }

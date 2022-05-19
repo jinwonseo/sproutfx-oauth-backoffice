@@ -32,22 +32,19 @@ public class ProjectController extends BaseController {
     @GetMapping
     public StructuredBody findAll() {
 
-        return StructuredBody.content(
-            this.projectQueryService.findAll().stream().map(ProjectResponse::new).collect(toList()));
+        return StructuredBody.content(this.projectQueryService.findAll().stream().map(ProjectResponse::new).collect(toList()));
     }
 
     @GetMapping(value = "/clients")
     public StructuredBody findAllWithClients() {
 
-        return StructuredBody.content(
-            this.projectQueryService.findAllWithClients().stream().map(ProjectWithClientsResponse::new).collect(toList()));
+        return StructuredBody.content(this.projectQueryService.findAllWithClients().stream().map(ProjectWithClientsResponse::new).collect(toList()));
     }
 
     @GetMapping("/{id}")
     public StructuredBody findById(@PathVariable UUID id) {
 
-        return StructuredBody.content(
-            new ProjectResponse(this.projectQueryService.findById(id)));
+        return StructuredBody.content(new ProjectResponse(this.projectQueryService.findById(id)));
     }
 
     @PostMapping
@@ -57,8 +54,7 @@ public class ProjectController extends BaseController {
 
         UUID id = this.projectCommandService.create(projectCreateRequest.getName(), projectCreateRequest.getDescription());
 
-        return StructuredBody.content(
-            new ProjectResponse(this.projectQueryService.findById(id)));
+        return StructuredBody.content(new ProjectResponse(this.projectQueryService.findById(id)));
     }
 
     @PutMapping("/{id}")
@@ -68,8 +64,7 @@ public class ProjectController extends BaseController {
 
         this.projectCommandService.update(id, projectUpdateRequest.getName(), projectUpdateRequest.getDescription());
 
-        return StructuredBody.content(
-            new ProjectResponse(this.projectQueryService.findById(id)));
+        return StructuredBody.content(new ProjectResponse(this.projectQueryService.findById(id)));
     }
 
     @PatchMapping("/{id}/status")
@@ -79,8 +74,7 @@ public class ProjectController extends BaseController {
 
         this.projectCommandService.updateStatus(id, projectStatusUpdateRequest.getProjectStatus());
 
-        return StructuredBody.content(
-            new ProjectResponse(this.projectQueryService.findById(id)));
+        return StructuredBody.content(new ProjectResponse(this.projectQueryService.findById(id)));
     }
 
     @DeleteMapping("/{id}")
@@ -92,7 +86,7 @@ public class ProjectController extends BaseController {
     }
 
     @Data
-    static class ProjectWithClientsResponse {
+    private static class ProjectWithClientsResponse {
         private final UUID id;
         private final String name;
         private final String status;
@@ -109,7 +103,7 @@ public class ProjectController extends BaseController {
     }
 
     @Data
-    static class ProjectResponse {
+    private static class ProjectResponse {
         private final UUID id;
         private final String name;
         private final String status;
@@ -124,7 +118,7 @@ public class ProjectController extends BaseController {
     }
 
     @Data
-    static class ClientResponse {
+    private static class ClientResponse {
         private final UUID id;
         private final String code;
         private final String name;
@@ -141,25 +135,26 @@ public class ProjectController extends BaseController {
     }
 
     @Data
-    static class ProjectCreateRequest {
+    private static class ProjectCreateRequest {
         @NotBlank
         private String name;
         private String description;
     }
 
     @Data
-    static class ProjectUpdateRequest {
+    private static class ProjectUpdateRequest {
         @NotBlank
         private String name;
         private String description;
     }
 
     @Data
-    static class ProjectStatusUpdateRequest {
+    private static class ProjectStatusUpdateRequest {
         private ProjectStatus projectStatus;
     }
+
     @Data
-    static class ProjectDeleteResponse {
+    private static class ProjectDeleteResponse {
         private UUID deletedProjectId;
 
         public ProjectDeleteResponse(UUID id) {

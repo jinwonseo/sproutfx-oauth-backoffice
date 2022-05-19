@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 
 public enum ClientStatus {
-    ACTIVE,
-    PENDING_APPROVAL,
-    DEACTIVATED,
-    BLOCKED;
+    ACTIVE, PENDING_APPROVAL, DEACTIVATED, BLOCKED;
 
     @JsonCreator
     public static ClientStatus fromValue(String value) {
