@@ -2,6 +2,7 @@ package kr.sproutfx.oauth.backoffice.api.client.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.sproutfx.oauth.backoffice.api.client.enumeration.ClientStatus;
+import kr.sproutfx.oauth.backoffice.api.client.enumeration.ClientType;
 import kr.sproutfx.oauth.backoffice.api.project.entity.Project;
 import kr.sproutfx.oauth.backoffice.configuration.jpa.entity.JpaBaseEntity;
 import lombok.*;
@@ -38,6 +39,10 @@ public class Client extends JpaBaseEntity implements Serializable {
     private UUID id;
 
     @Column(nullable = false, columnDefinition = "varchar(255)")
+    @Enumerated(EnumType.STRING)
+    private ClientType type;
+
+    @Column(nullable = false, columnDefinition = "varchar(255)")
     private String code;
 
     @Column(nullable = false, columnDefinition = "varchar(255)")
@@ -56,7 +61,7 @@ public class Client extends JpaBaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private ClientStatus status;
 
-    @Column(nullable = true, columnDefinition = "varchar(255)")
+    @Column(columnDefinition = "varchar(255)")
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

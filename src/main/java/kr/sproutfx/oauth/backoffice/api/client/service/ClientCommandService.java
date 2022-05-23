@@ -2,6 +2,7 @@ package kr.sproutfx.oauth.backoffice.api.client.service;
 
 import kr.sproutfx.oauth.backoffice.api.client.entity.Client;
 import kr.sproutfx.oauth.backoffice.api.client.enumeration.ClientStatus;
+import kr.sproutfx.oauth.backoffice.api.client.enumeration.ClientType;
 import kr.sproutfx.oauth.backoffice.api.client.exception.ClientNotFoundException;
 import kr.sproutfx.oauth.backoffice.api.client.repository.ClientRepository;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -23,7 +24,17 @@ public class ClientCommandService {
 
     public UUID create(String name, String description) {
 
-        Client persistenceClient = this.clientRepository.save(Client.builder().code(UUID.randomUUID().toString().replace("-", StringUtils.EMPTY)).name(name).secret(Base64Utils.encodeToUrlSafeString(RandomStringUtils.randomAlphanumeric(32).getBytes())).status(ClientStatus.PENDING_APPROVAL).accessTokenSecret(RandomStringUtils.randomAlphanumeric(96)).accessTokenValidityInSeconds(7200L).description(description).build());
+        Client persistenceClient = this.clientRepository.save(
+            Client.builder()
+                .code(UUID.randomUUID().toString().replace("-", StringUtils.EMPTY))
+                .name(name)
+                .type(ClientType.RESOURCE_SERVER)
+                .secret(Base64Utils.encodeToUrlSafeString(RandomStringUtils.randomAlphanumeric(32).getBytes()))
+                .status(ClientStatus.PENDING_APPROVAL)
+                .accessTokenSecret(RandomStringUtils.randomAlphanumeric(96))
+                .accessTokenValidityInSeconds(7200L)
+                .description(description)
+                .build());
 
         return persistenceClient.getId();
     }
