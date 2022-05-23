@@ -18,12 +18,12 @@ public class MemberAuthorizeController {
     }
 
     @GetMapping(value = "/{id}")
-    public MemberResponse findById(@RequestHeader("provider-code") String providerCode, @PathVariable UUID id) {
+    public MemberResponse findById(@PathVariable UUID id) {
         return new MemberResponse(this.memberQueryService.findById(id));
     }
 
     @GetMapping(params = {"email"})
-    public MemberResponse findByEmail(@RequestHeader("provider-code") String providerCode, @RequestParam String email) {
+    public MemberResponse findByEmail(@RequestParam String email) {
         return new MemberResponse(this.memberQueryService.findByEmail(email));
     }
 

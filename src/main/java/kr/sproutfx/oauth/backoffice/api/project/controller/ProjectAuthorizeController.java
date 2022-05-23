@@ -17,7 +17,7 @@ public class ProjectAuthorizeController {
     }
 
     @GetMapping(value = "/{id}")
-    public ProjectResponse findById(@RequestHeader("provider-code") String providerCode, @PathVariable UUID id) {
+    public ProjectResponse findById(@PathVariable UUID id) {
         return new ProjectResponse(this.projectQueryService.findById(id));
     }
 

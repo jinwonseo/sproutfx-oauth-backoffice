@@ -4,7 +4,10 @@ import kr.sproutfx.oauth.backoffice.api.client.entity.Client;
 import kr.sproutfx.oauth.backoffice.api.client.service.ClientQueryService;
 import kr.sproutfx.oauth.backoffice.common.base.BaseController;
 import lombok.Data;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
@@ -18,12 +21,12 @@ public class ClientAuthorizeController extends BaseController {
     }
 
     @GetMapping(params = {"client-code"})
-    public ClientResponse findByCode(@RequestHeader("provider-code") String providerCode, @RequestParam(value = "client-code") String code) {
+    public ClientResponse findByCode(@RequestParam(value = "client-code") String code) {
         return new ClientResponse(this.clientQueryService.findByCodeWithProject(code));
     }
 
     @GetMapping(params = {"client-secret"})
-    public ClientResponse findBySecret(@RequestHeader("provider-code") String providerCode, @RequestParam(value = "client-secret") String secret) {
+    public ClientResponse findBySecret(@RequestParam(value = "client-secret") String secret) {
         return new ClientResponse(this.clientQueryService.findBySecretWithProject(secret));
     }
 
