@@ -106,6 +106,9 @@ sproutfx:
       queue-size: 512
 
   web-client:
+    validation-header:
+      header: validate-secret
+      value: QjdjdkFWU1FkVkNpVUhkUk41bFJHVHpSZW1pWEZtbnY=
     common-gateway:
       name: sproutfx-common-gateway
       url: http://127.0.0.1:8080
