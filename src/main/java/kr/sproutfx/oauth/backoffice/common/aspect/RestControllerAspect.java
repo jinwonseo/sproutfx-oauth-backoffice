@@ -1,8 +1,12 @@
 package kr.sproutfx.oauth.backoffice.common.aspect;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -16,79 +20,90 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @Aspect
 public class RestControllerAspect {
 
-    class RestControllerLog {
-        @JsonIgnore
-        private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
+    private final Logger logger = LoggerFactory.getLogger(RestControllerAspect.class);
 
-        public RestControllerLog(String method, String request, Object[] args) {
-            this.request = String.format("%s %s", method, request);
-            this.setArguments(args);
-        }
+    public RestControllerAspect(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
-        private String request;
-        private List<Object> arguments;
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)"
+        + " || @annotation(org.springframework.web.bind.annotation.PostMapping)"
+        + " || @annotation(org.springframework.web.bind.annotation.PutMapping)"
+        + " || @annotation(org.springframework.web.bind.annotation.PatchMapping)"
+        + " || @annotation(org.springframework.web.bind.annotation.DeleteMapping)")
+    private void onRequest() { }
 
-        public String getRequest() {
-            return this.request;
-        }
+    @Around("onRequest()")
+    private Object doRequestLogging(ProceedingJoinPoint proceedingJoinPoint) throws IOException {
+        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
-        public List<Object> getArguments() {
-            return this.arguments;
-        }
+        String method = httpServletRequest.getMethod();
+        String uri = httpServletRequest.getRequestURI();
+        Map<String, List<String>> headers = Collections.list(httpServletRequest.getHeaderNames())
+            .stream()
+            .collect(Collectors.toMap(Function.identity(), header -> Collections.list(httpServletRequest.getHeaders(header))));
+        Map<String, String[]> params = httpServletRequest.getParameterMap();
 
-        private void setArguments(Object[] args) {
-            for (Object object : args) {
-                if (Boolean.TRUE.equals(this.canConvertToJsonString(object))) {
-                    if (arguments == null) arguments = new ArrayList<>();
+        InputStream bodyInputStream = httpServletRequest.getInputStream();
 
-                    arguments.add(object);
-                }
-            }
-        }
+        Map<String, Object> body = (bodyInputStream.available() != 0) ? objectMapper.readValue(bodyInputStream, Map.class) : null;
 
-        private Boolean canConvertToJsonString(Object object) {
-            try {
-                this.objectMapper.writeValueAsString(object);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        }
+        Object responseBody = null;
 
-        public String toJsonString() throws JsonProcessingException {
-            return this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        long startTimeMillis = System.currentTimeMillis();
+        try {
+            responseBody = proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
+            return responseBody;
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        } finally {
+            long endTimeMillis = System.currentTimeMillis();
+            long duration = endTimeMillis - startTimeMillis;
+            logger.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(new StructuredRestControllerLog(method, uri, headers, params, body, duration, responseBody)));
         }
     }
 
-    private final Logger logger = LoggerFactory.getLogger(RestControllerAspect.class);
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Data
+    static class StructuredRestControllerLog {
+        @JsonProperty(value = "request-method")
+        private final String requestMethod;
+        @JsonProperty(value = "request-uri")
+        private final String requestUri;
+        @JsonProperty(value = "request-headers")
+        private final Map<String, List<String>> requestHeaders;
+        @JsonProperty(value = "request-params")
+        private final Map<String, String[]> requestParams;
+        @JsonProperty(value = "request-body")
+        private Map<String, Object> requestBody;
+        @JsonProperty(value = "response-body")
+        private final Object responseBody;
+        @JsonProperty(value = "duration")
+        private final String duration;
 
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)" + " || @annotation(org.springframework.web.bind.annotation.PostMapping)" + " || @annotation(org.springframework.web.bind.annotation.PutMapping)" + " || @annotation(org.springframework.web.bind.annotation.DeleteMapping)")
-    private void onRequest() { /* Rest Controller Pointcut */ }
-
-    @Around("onRequest()")
-    public Object doLogging(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-
-        String restControllerJsonLog = StringUtils.EMPTY;
-        StopWatch stopWatch = new StopWatch();
-
-        try {
-            stopWatch.start();
-            Object proceed = proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
-            stopWatch.stop();
-
-            restControllerJsonLog = new RestControllerLog(httpServletRequest.getMethod(), httpServletRequest.getRequestURI(), proceedingJoinPoint.getArgs()).toJsonString();
-
-            return proceed;
-        } finally {
-            logger.info("{} < {}({}ms)", restControllerJsonLog, httpServletRequest.getRemoteHost(), stopWatch.getTime());
+        public StructuredRestControllerLog(String requestMethod, String requestUri, Map<String, List<String>> requestHeaders, Map<String, String[]> requestParams, Map<String, Object> requestBody, Long duration, Object responseBody) {
+            this.requestMethod = requestMethod;
+            this.requestUri = requestUri;
+            this.requestHeaders = requestHeaders;
+            this.requestParams = requestParams;
+            this.requestBody = requestBody;
+            this.duration = String.format("%d ms", duration);
+            this.responseBody = responseBody;
         }
     }
 }
