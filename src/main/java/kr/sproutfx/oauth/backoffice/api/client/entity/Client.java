@@ -6,8 +6,11 @@ import kr.sproutfx.oauth.backoffice.api.client.enumeration.ClientType;
 import kr.sproutfx.oauth.backoffice.api.project.entity.Project;
 import kr.sproutfx.oauth.backoffice.configuration.jpa.entity.JpaBaseEntity;
 import lombok.*;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.*;
 import org.hibernate.envers.Audited;
+import org.springframework.util.Base64Utils;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -17,7 +20,6 @@ import java.util.UUID;
 
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -68,4 +70,34 @@ public class Client extends JpaBaseEntity implements Serializable {
     @JoinColumn(name = "project_id")
     @JsonIgnore
     private Project project;
+
+
+    public void update(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public void updateType(ClientType type) {
+        this.type = type;
+    }
+
+    public void updateCode() {
+        this.code = UUID.randomUUID().toString().replace("-", StringUtils.EMPTY);
+    }
+
+    public void updateSecret() {
+        this.secret = Base64Utils.encodeToUrlSafeString(RandomStringUtils.randomAlphanumeric(32).getBytes());
+    }
+
+    public void updateStatus(ClientStatus status) {
+        this.status = status;
+    }
+
+    public void updateAccessTokenSecret() {
+        this.accessTokenSecret = RandomStringUtils.randomAlphanumeric(128);
+    }
+
+    public void updateAccessTokenValidityInSeconds(Long accessTokenValidityInSeconds) {
+        this.accessTokenValidityInSeconds = accessTokenValidityInSeconds;
+    }
 }
