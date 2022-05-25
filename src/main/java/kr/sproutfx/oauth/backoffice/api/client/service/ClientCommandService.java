@@ -39,20 +39,18 @@ public class ClientCommandService {
         return persistenceClient.getId();
     }
 
-    public void update(UUID id, String name, Long accessTokenValidityInSeconds, String description) {
+    public void update(UUID id, String name, String description) {
 
         Client persistenceClient = this.clientRepository.findById(id).orElseThrow(ClientNotFoundException::new);
 
-        persistenceClient.setName(name);
-        persistenceClient.setAccessTokenValidityInSeconds(accessTokenValidityInSeconds);
-        persistenceClient.setDescription(description);
+        persistenceClient.update(name, description);
     }
 
     public void updateStatus(UUID id, ClientStatus clientStatus) {
 
         Client persistenceClient = this.clientRepository.findById(id).orElseThrow(ClientNotFoundException::new);
 
-        persistenceClient.setStatus(clientStatus);
+        persistenceClient.updateStatus(clientStatus);
     }
 
     public void deleteById(UUID id) {

@@ -27,14 +27,13 @@ public class ProjectCommandService {
     public void update(UUID id, String name, String description) {
         Project persistenceProject = this.projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
 
-        persistenceProject.setName(name);
-        persistenceProject.setDescription(description);
+        persistenceProject.update(name, description);
     }
 
     public void updateStatus(UUID id, ProjectStatus projectStatus) {
         Project persistenceProject = this.projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
 
-        persistenceProject.setStatus(projectStatus);
+        persistenceProject.updateStatus(projectStatus);
     }
 
     public void delete(UUID id) {

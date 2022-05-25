@@ -14,7 +14,11 @@ public class RestControllerAdvisor {
         if (t instanceof BaseException) {
             return ResponseEntity.status(((BaseException) t).getHttpStatus()).body(StructuredBody.error(t));
         } else if (t instanceof Exception) {
-            return ResponseEntity.badRequest().body(StructuredBody.error(new UnhandledException(t.getLocalizedMessage())));
+            if (t.getCause() != null && t.getCause() instanceof BaseException) {
+                return ResponseEntity.status(((BaseException) t.getCause()).getHttpStatus()).body(StructuredBody.error(t.getCause()));
+            } else {
+                return ResponseEntity.badRequest().body(StructuredBody.error(new UnhandledException(t.getLocalizedMessage())));
+            }
         } else {
             return ResponseEntity.internalServerError().body(StructuredBody.error(new UnhandledException(t.getLocalizedMessage())));
         }

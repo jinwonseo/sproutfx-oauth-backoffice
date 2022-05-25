@@ -1,10 +1,12 @@
 package kr.sproutfx.oauth.backoffice.api.member.entity;
 
 import kr.sproutfx.oauth.backoffice.api.member.enumeration.MemberStatus;
+import kr.sproutfx.oauth.backoffice.api.member.exception.MemberPasswordNotMatchesException;
 import kr.sproutfx.oauth.backoffice.configuration.jpa.entity.JpaBaseEntity;
 import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.envers.Audited;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -15,7 +17,6 @@ import java.util.UUID;
 
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -50,6 +51,23 @@ public class Member extends JpaBaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
-    @Column(nullable = true, columnDefinition = "varchar(255)")
+    @Column(columnDefinition = "varchar(255)")
     private String description;
+
+    public void update(String email, String name, String description) {
+        this.email = email;
+        this.name = name;
+        this.description = description;
+    }
+
+    public void updatePassword(PasswordEncoder passwordEncoder, String currentPassword, String newPassword) {
+        if (!passwordEncoder.matches(currentPassword, this.password)) throw new MemberPasswordNotMatchesException();
+
+        this.password = passwordEncoder.encode(newPassword);
+        this.passwordExpired = LocalDateTime.now().plusDays(90);
+    }
+
+    public void updateStatus(MemberStatus status) {
+        this.status = status;
+    }
 }

@@ -11,8 +11,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
@@ -58,11 +56,9 @@ public class ClientController extends BaseController {
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
         String name = clientUpdateRequest.getName();
-        Long accessTokenValidityInSeconds = clientUpdateRequest.getAccessTokenValidityInSeconds();
-
         String description = clientUpdateRequest.getDescription();
 
-        this.clientCommandService.update(id, name, accessTokenValidityInSeconds, description);
+        this.clientCommandService.update(id, name, description);
 
         return StructuredBody.content(new ClientResponse(this.clientQueryService.findById(id)));
     }
@@ -84,6 +80,26 @@ public class ClientController extends BaseController {
     }
 
     @Data
+    private static class ClientCreateRequest {
+        @NotBlank
+        private String name;
+        private String description;
+    }
+
+    @Data
+    private static class ClientUpdateRequest {
+        @NotBlank
+        private String name;
+        private String description;
+    }
+
+    @Data
+    private static class ClientStatusUpdateRequest {
+        @NotBlank
+        private ClientStatus clientStatus;
+    }
+
+    @Data
     private static class ClientResponse {
         private final UUID id;
         private final String code;
@@ -98,28 +114,6 @@ public class ClientController extends BaseController {
             this.status = (client.getStatus() == null) ? null : client.getStatus().toString();
             this.description = client.getDescription();
         }
-    }
-
-    @Data
-    private static class ClientCreateRequest {
-        @NotBlank
-        private String name;
-        private String description;
-    }
-
-    @Data
-    private static class ClientUpdateRequest {
-        @NotBlank
-        private String name;
-        @Min(3600)
-        @Max(7200)
-        private Long accessTokenValidityInSeconds;
-        private String description;
-    }
-
-    @Data
-    private static class ClientStatusUpdateRequest {
-        private ClientStatus clientStatus;
     }
 
     @Data
