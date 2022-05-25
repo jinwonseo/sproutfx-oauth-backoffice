@@ -17,7 +17,6 @@ import java.util.UUID;
 
 
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -46,9 +45,18 @@ public class Project extends JpaBaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
 
-    @Column(nullable = true, columnDefinition = "varchar(255)")
+    @Column(columnDefinition = "varchar(255)")
     private String description;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Client> clients;
+
+    public void update(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public void updateStatus(ProjectStatus status) {
+        this.status = status;
+    }
 }
