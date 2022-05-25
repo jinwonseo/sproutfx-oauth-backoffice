@@ -3,7 +3,6 @@ package kr.sproutfx.oauth.backoffice.api.member.service;
 import kr.sproutfx.oauth.backoffice.api.member.entity.Member;
 import kr.sproutfx.oauth.backoffice.api.member.enumeration.MemberStatus;
 import kr.sproutfx.oauth.backoffice.api.member.exception.MemberNotFoundException;
-import kr.sproutfx.oauth.backoffice.api.member.exception.MemberPasswordNotMatchesException;
 import kr.sproutfx.oauth.backoffice.api.member.repository.MemberRepository;
 import kr.sproutfx.oauth.backoffice.api.member.repository.specification.MemberSpecification;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,8 +24,14 @@ public class MemberCommandService {
     }
 
     public UUID create(String email, String name, String password, String description) {
-        Member persistenceMember = this.memberRepository.save(Member.builder().email(email).name(name).password(this.passwordEncoder.encode(password)).passwordExpired(LocalDateTime.now().plusDays(90)) // To-do: password 90일 하드코딩 password 정책관리 기능 추가 후 변수화
-            .status(MemberStatus.PENDING_APPROVAL).description(description).build());
+        Member persistenceMember = this.memberRepository.save(Member.builder()
+            .email(email)
+            .name(name)
+            .password(this.passwordEncoder.encode(password))
+            .passwordExpired(LocalDateTime.now().plusDays(90)) // To-do: password 90일 하드코딩 password 정책관리 기능 추가 후 변수화
+            .status(MemberStatus.PENDING_APPROVAL)
+            .description(description)
+            .build());
 
         return persistenceMember.getId();
     }
@@ -34,21 +39,13 @@ public class MemberCommandService {
     public void update(UUID id, String email, String name, String description) {
         Member persistenceMember = this.memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
 
-        persistenceMember.setEmail(email);
-        persistenceMember.setName(name);
-        persistenceMember.setDescription(description);
+        persistenceMember.update(email, name, description);
     }
 
     public UUID updatePassword(String email, String currentPassword, String newPassword) {
         Member persistenceMember = this.memberRepository.findOne(MemberSpecification.equalEmail(email)).orElseThrow(MemberNotFoundException::new);
 
-        if (!this.passwordEncoder.matches(currentPassword, persistenceMember.getPassword())) {
-            throw new MemberPasswordNotMatchesException();
-        }
-
-        persistenceMember.setPassword(this.passwordEncoder.encode(newPassword));
-        // To-do: password 90일 하드코딩 password 정책관리 기능 추가 후 변수화
-        persistenceMember.setPasswordExpired(LocalDateTime.now().plusDays(90));
+        persistenceMember.updatePassword(passwordEncoder, currentPassword, newPassword);
 
         return persistenceMember.getId();
     }
@@ -56,7 +53,7 @@ public class MemberCommandService {
     public void updateStatus(UUID id, MemberStatus memberStatus) {
         Member persistenceMember = this.memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
 
-        persistenceMember.setStatus(memberStatus);
+        persistenceMember.updateStatus(memberStatus);
     }
 
     public void deleteById(UUID id) {
