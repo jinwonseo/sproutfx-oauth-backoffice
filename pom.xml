@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.13</version>
+        <version>2.5.14</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>kr.sproutfx.oauth</groupId>
@@ -142,13 +142,13 @@
         <dependency>
             <groupId>kr.sproutfx.common</groupId>
             <artifactId>sproutfx-common-logging-spring-boot-stater</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
+            <version>0.0.4-SNAPSHOT</version>
         </dependency>
         <!-- Security -->
         <dependency>
             <groupId>kr.sproutfx.common</groupId>
             <artifactId>sproutfx-common-security-spring-boot-starter</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
+            <version>0.0.4-SNAPSHOT</version>
         </dependency>
 
         <!-- Test -->
