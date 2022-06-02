@@ -11,14 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class RestControllerAdvisor {
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<StructuredBody> exception(final Throwable t) {
-        if (t instanceof BaseException) {
-            return ResponseEntity.status(((BaseException) t).getHttpStatus()).body(StructuredBody.error(t));
-        } else if (t instanceof Exception) {
-            if (t.getCause() != null && t.getCause() instanceof BaseException) {
-                return ResponseEntity.status(((BaseException) t.getCause()).getHttpStatus()).body(StructuredBody.error(t.getCause()));
-            } else {
-                return ResponseEntity.badRequest().body(StructuredBody.error(new UnhandledException(t.getLocalizedMessage())));
-            }
+        if (t instanceof RuntimeException && t.getCause() != null && t.getCause() instanceof BaseException) {
+            return ResponseEntity.status(((BaseException) t.getCause()).getHttpStatus()).body(StructuredBody.error(t.getCause()));
         } else {
             return ResponseEntity.internalServerError().body(StructuredBody.error(new UnhandledException(t.getLocalizedMessage())));
         }
