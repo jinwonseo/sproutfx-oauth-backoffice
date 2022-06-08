@@ -10,11 +10,11 @@ spring:
   output:
     ansi:
       enabled: always
-  devtools:
-    restart:
-      log-condition-evaluation-delta: false
+  security:
+    user:
+      password: ${random.uuid}
   rabbitmq:
-    host: sproutfx.kr # 127.0.0.1
+    host: sproutfx.kr
     port: 5672
     username: sproutfx-oauth-backoffice
     password: sproutfx-oauth-backoffice
@@ -51,14 +51,7 @@ eureka:
     lease-renewal-interval-in-seconds: 3
     lease-expiration-duration-in-seconds: 10
   client:
-    healthcheck:
-      enabled: true
-    register-with-eureka: true
-    fetch-registry: true
-    registry-fetch-interval-seconds: 10
-    disable-delta: false
-    service-url:
-      defaultZone: http://discovery.sproutfx.kr/eureka/
+    enabled: false
 
 management:
   endpoints:
@@ -72,6 +65,13 @@ management:
       enabled: true
     health:
       show-details: always
+
+logging:
+  level:
+    root: WARN
+    com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver: WARN
+    kr.sproutfx: INFO
+    kr.sproutfx.oauth.backoffice.common.aspect: DEBUG
 
 sproutfx:
   crypto:
@@ -87,28 +87,33 @@ sproutfx:
       provider-code: b605d2a8058542cd888dc547f56768bc
       client-code: 5e0f947f90e74061afb4f521d96b5170
       access-token-secret: sOLpFJKe58kMKDtx4gutvj4444fqoMWmngouZQLFEy4qaKSMQRToRBUcKpG7mkRupVWOQJtopjW29QRGDtnKopvSIewlAVOW
-    web:
-      ignore:
-        patterns:
-          - '/**'
     http:
       authorize-requests:
         permit-all:
           patterns:
-            - '/**'
+            - '/actuator/**'
+            - '/h2-console/**'
+            - '/de7e284c-38ef-46fb-b911-12ad2faf8623/**'
+  web:
+    filter:
+      content-caching-filter:
+        ignore:
+          regex: "^\\/api\\/oauth-backoffice\\/h2-console.*$"
+    interceptor:
+      provider-validate-interceptor:
+        validation-header: validate-secret
+        validation-value: QjdjdkFWU1FkVkNpVUhkUk41bFJHVHpSZW1pWEZtbnY=
+        patterns:
+          - "/de7e284c-38ef-46fb-b911-12ad2faf8623/**"
   logging:
     identifier: ${spring.application.name}-${spring.profiles.active}
     logstash:
       appender-name: LOGSTASH
       async-appender-name: ASYNC_LOGSTASH
-      host: sproutfx.kr # 127.0.0.1
+      host: sproutfx.kr
       port: 5045
       queue-size: 512
-
   web-client:
-    validation-header:
-      header: validate-secret
-      value: QjdjdkFWU1FkVkNpVUhkUk41bFJHVHpSZW1pWEZtbnY=
     common-gateway:
       name: sproutfx-common-gateway
       url: http://127.0.0.1:8080
