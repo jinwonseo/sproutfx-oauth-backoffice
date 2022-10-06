@@ -2,7 +2,6 @@ package kr.sproutfx.oauth.backoffice.api.client.controller;
 
 import kr.sproutfx.oauth.backoffice.api.client.entity.Client;
 import kr.sproutfx.oauth.backoffice.api.client.service.ClientQueryService;
-import kr.sproutfx.oauth.backoffice.common.base.BaseController;
 import lombok.Data;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/de7e284c-38ef-46fb-b911-12ad2faf8623/clients")
-public class ClientAuthorizeController extends BaseController {
+public class ClientAuthorizeController {
     private final ClientQueryService clientQueryService;
 
     public ClientAuthorizeController(ClientQueryService clientQueryService) {

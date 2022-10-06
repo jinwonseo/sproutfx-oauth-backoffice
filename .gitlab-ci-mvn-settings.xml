@@ -1,8 +1,15 @@
 <settings xmlns="http://maven.apache.org/SETTINGS/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
     <servers>
+        <!-- private nexus maven repository -->
         <server>
-            <id>gitlab-maven</id>
+            <id>private-nexus3-maven</id>
+            <username>${NEXUS3_USERNAME}</username>
+            <password>${NEXUS3_PASSWORD}</password>
+        </server>
+        <!-- private gitlab package registry -->
+        <server>
+            <id>private-gitlab-maven</id>
             <configuration>
                 <httpHeaders>
                     <property>
@@ -13,4 +20,20 @@
             </configuration>
         </server>
     </servers>
+    <mirrors>
+        <!-- private nexus repo -->
+        <mirror>
+            <id>private-nexus3-maven</id>
+            <mirrorOf>*</mirrorOf>
+            <name>private-nexus3-maven</name>
+            <url>http://nexus.sproutfx.kr/repository/maven-public/</url>
+        </mirror>
+        <!-- private gitlab repo -->
+        <mirror>
+            <id>private-gitlab-maven</id>
+            <mirrorOf>snapshot, release</mirrorOf>
+            <name>private-gitlab-maven</name>
+            <url>https://gitlab.sproutfx.kr/api/v4/groups/5/-/packages/maven/</url>
+        </mirror>
+    </mirrors>
 </settings>

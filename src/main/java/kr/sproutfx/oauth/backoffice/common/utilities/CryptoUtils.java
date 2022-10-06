@@ -16,7 +16,6 @@ import java.security.cert.Certificate;
 public class CryptoUtils {
     private static String location;
     private static String alias;
-    private static String secret;
     private static String password;
 
     private static final String CIPHER_TRANSFORMATION = "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
@@ -29,11 +28,6 @@ public class CryptoUtils {
     @Value("${sproutfx.crypto.key-store.alias}")
     public void setAlias(String value) {
         alias = value;
-    }
-
-    @Value("${sproutfx.crypto.key-store.secret}")
-    public void setSecret(String value) {
-        secret = value;
     }
 
     @Value("${sproutfx.crypto.key-store.password}")

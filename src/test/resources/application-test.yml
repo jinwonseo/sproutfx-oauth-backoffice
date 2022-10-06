@@ -14,10 +14,10 @@ spring:
     user:
       password: ${random.uuid}
   rabbitmq:
-    host: sproutfx.kr
+    host: 127.0.0.1
     port: 5672
-    username: sproutfx-oauth-backoffice
-    password: sproutfx-oauth-backoffice
+    username: ${spring.application.name}
+    password: ${spring.application.name}
   h2:
     console:
       enabled: true
@@ -76,9 +76,8 @@ logging:
 sproutfx:
   crypto:
     key-store:
-      location: classpath:/keystore/sproutfx-oauth-backoffice.jks
-      alias: sproutfx-oauth-backoffice
-      secret: cGxhdGZvcm0tY29uZmln
+      location: classpath:/keystore/${spring.application.name}.jks
+      alias: ${spring.application.name}
       password: cGxhdGZvcm0tY29uZmln
   security:
     authorization:
@@ -110,10 +109,8 @@ sproutfx:
     logstash:
       appender-name: LOGSTASH
       async-appender-name: ASYNC_LOGSTASH
-      host: sproutfx.kr
+      host: 127.0.0.1
       port: 5045
       queue-size: 512
   web-client:
-    common-gateway:
-      name: sproutfx-common-gateway
-      url: http://127.0.0.1:8080
+    gateway-url: http://gateway.sproutfx.kr

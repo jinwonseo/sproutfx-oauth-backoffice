@@ -5,7 +5,7 @@ import kr.sproutfx.oauth.backoffice.api.project.entity.Project;
 import kr.sproutfx.oauth.backoffice.api.project.enumeration.ProjectStatus;
 import kr.sproutfx.oauth.backoffice.api.project.service.ProjectCommandService;
 import kr.sproutfx.oauth.backoffice.api.project.service.ProjectQueryService;
-import kr.sproutfx.oauth.backoffice.common.base.BaseController;
+import kr.sproutfx.oauth.backoffice.common.dto.StructuredBody;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
 import lombok.Data;
 import org.springframework.validation.Errors;
@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = "projects")
-public class ProjectController extends BaseController {
+public class ProjectController {
     private final ProjectCommandService projectCommandService;
     private final ProjectQueryService projectQueryService;
 
