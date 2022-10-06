@@ -18,25 +18,15 @@
         <spring-cloud.version>2020.0.5</spring-cloud.version>
     </properties>
     <repositories>
+        <!-- private nexus maven repository -->
         <repository>
-            <id>gitlab-maven</id>
-            <url>https://gitlab.com/api/v4/groups/16033742/-/packages/maven/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>sproutfx-maven</id>
+            <id>private-nexus3-maven</id>
             <url>http://nexus.sproutfx.kr/repository/maven-public/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
+        </repository>
+        <!-- private gitlab package registry -->
+        <repository>
+            <id>private-gitlab-maven</id>
+            <url>https://gitlab.sproutfx.kr/api/v4/groups/14/-/packages/maven/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -120,6 +110,12 @@
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
         </dependency>
+        <!-- modelmapper -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.1.0</version>
+        </dependency>
 
         <!-- Lombok -->
         <dependency>
@@ -132,7 +128,7 @@
         <!-- Logging -->
         <dependency>
             <groupId>kr.sproutfx.common</groupId>
-            <artifactId>sproutfx-common-logging-spring-boot-stater</artifactId>
+            <artifactId>sproutfx-common-logging-spring-boot-starter</artifactId>
             <version>0.0.4-SNAPSHOT</version>
         </dependency>
         <!-- Security -->

@@ -4,7 +4,7 @@ import kr.sproutfx.oauth.backoffice.api.member.entity.Member;
 import kr.sproutfx.oauth.backoffice.api.member.enumeration.MemberStatus;
 import kr.sproutfx.oauth.backoffice.api.member.service.MemberCommandService;
 import kr.sproutfx.oauth.backoffice.api.member.service.MemberQueryService;
-import kr.sproutfx.oauth.backoffice.common.base.BaseController;
+import kr.sproutfx.oauth.backoffice.common.dto.StructuredBody;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
 import lombok.Data;
 import org.springframework.validation.Errors;
@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = "/members")
-public class MemberController extends BaseController {
+public class MemberController {
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
 

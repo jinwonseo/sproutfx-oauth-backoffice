@@ -4,7 +4,7 @@ import kr.sproutfx.oauth.backoffice.api.client.entity.Client;
 import kr.sproutfx.oauth.backoffice.api.client.enumeration.ClientStatus;
 import kr.sproutfx.oauth.backoffice.api.client.service.ClientCommandService;
 import kr.sproutfx.oauth.backoffice.api.client.service.ClientQueryService;
-import kr.sproutfx.oauth.backoffice.common.base.BaseController;
+import kr.sproutfx.oauth.backoffice.common.dto.StructuredBody;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
 import lombok.Data;
 import org.springframework.validation.Errors;
@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/clients")
-public class ClientController extends BaseController {
+public class ClientController {
 
     private final ClientCommandService clientCommandService;
     private final ClientQueryService clientQueryService;
