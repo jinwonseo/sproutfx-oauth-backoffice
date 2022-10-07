@@ -1,0 +1,4 @@
+INSERT INTO `projects` (`id`, `name`, `status`, `description`, `deleted`, `created_by`, `created_on`, `last_modified_by`, `last_modified_on`) VALUES ('000ad2e4-a785-4e1a-b082-60e71381c64a', 'sproutfx-oauth', 'ACTIVE', NULL, 0, NULL, '2022-03-29 11:19:49', NULL, '2022-03-29 10:57:02');
+
+-- Template
+INSERT INTO `projects` (`id`, `created_by`, `created_on`, `deleted`, `last_modified_by`, `last_modified_on`, `description`, `name`, `status`) VALUES ('ffe8f4ff-a00d-4863-8a7b-52c7b1c4d1c4', '0000f14c-e1d9-4908-8c0e-8abba741dd97', '2022-05-27 17:44:32', 0, '0000f14c-e1d9-4908-8c0e-8abba741dd97', '2022-05-27 08:43:39', NULL, 'sproutfx-template', 'ACTIVE');
