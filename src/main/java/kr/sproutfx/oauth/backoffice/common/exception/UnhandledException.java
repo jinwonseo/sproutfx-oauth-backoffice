@@ -1,14 +1,14 @@
 package kr.sproutfx.oauth.backoffice.common.exception;
 
-import kr.sproutfx.oauth.backoffice.common.base.BaseException;
+import org.springframework.http.HttpStatus;
 
 public class UnhandledException extends BaseException {
 
     public UnhandledException() {
-        super("-1", "Unhandled exception", null);
+        super("-1", "Unhandled exception", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public UnhandledException(String reason) {
-        super("-1", reason, null);
+        super("-1", reason, HttpStatus.BAD_REQUEST);
     }
 }

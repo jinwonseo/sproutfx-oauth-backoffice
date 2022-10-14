@@ -1,6 +1,5 @@
 package kr.sproutfx.oauth.backoffice.common.exception;
 
-import kr.sproutfx.oauth.backoffice.common.base.BaseException;
 import org.springframework.http.HttpStatus;
 
 public class InvalidArgumentException extends BaseException {
