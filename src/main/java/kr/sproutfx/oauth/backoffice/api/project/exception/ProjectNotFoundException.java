@@ -1,6 +1,6 @@
 package kr.sproutfx.oauth.backoffice.api.project.exception;
 
-import kr.sproutfx.oauth.backoffice.common.base.BaseException;
+import kr.sproutfx.oauth.backoffice.common.exception.BaseException;
 import org.springframework.http.HttpStatus;
 
 public class ProjectNotFoundException extends BaseException {

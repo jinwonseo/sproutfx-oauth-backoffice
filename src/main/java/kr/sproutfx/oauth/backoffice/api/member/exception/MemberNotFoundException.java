@@ -1,6 +1,6 @@
 package kr.sproutfx.oauth.backoffice.api.member.exception;
 
-import kr.sproutfx.oauth.backoffice.common.base.BaseException;
+import kr.sproutfx.oauth.backoffice.common.exception.BaseException;
 import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
