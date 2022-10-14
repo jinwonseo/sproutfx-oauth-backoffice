@@ -27,26 +27,26 @@ public class StructuredResponseEntity extends ResponseEntity<BaseResponseBodyStr
         super(status);
     }
 
-    public static <T extends Collection<? extends BaseResponse>> StructuredResponseEntity succeeded(T content) {
-        return new StructuredResponseEntity(MultiContentResponseBodyStructure.content(content), HttpStatus.OK);
+    public static <C extends Collection<? extends BaseResponse>> StructuredResponseEntity succeeded(C collection) {
+        return new StructuredResponseEntity(MultiContentResponseBodyStructure.content(collection), HttpStatus.OK);
     }
 
-    public static <T extends BaseResponse> StructuredResponseEntity succeeded(T content) {
-        return new StructuredResponseEntity(SingleContentResponseBodyStructure.content(content), HttpStatus.OK);
+    public static <R extends BaseResponse> StructuredResponseEntity succeeded(R response) {
+        return new StructuredResponseEntity(SingleContentResponseBodyStructure.content(response), HttpStatus.OK);
     }
 
-    public static <T extends BaseResponse> StructuredResponseEntity created(URI uri, T content) {
+    public static <R extends BaseResponse> StructuredResponseEntity created(URI uri, R response) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(uri);
 
-        return new StructuredResponseEntity(SingleContentResponseBodyStructure.content(content), httpHeaders, HttpStatus.CREATED);
+        return new StructuredResponseEntity(SingleContentResponseBodyStructure.content(response), httpHeaders, HttpStatus.CREATED);
     }
 
     public static StructuredResponseEntity deleted() {
         return new StructuredResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    public static <T extends BaseException> StructuredResponseEntity error(T exception) {
+    public static <E extends BaseException> StructuredResponseEntity error(E exception) {
         return new StructuredResponseEntity(ErrorResponseBodyStructure.error(exception), exception.getHttpStatus());
     }
 }
