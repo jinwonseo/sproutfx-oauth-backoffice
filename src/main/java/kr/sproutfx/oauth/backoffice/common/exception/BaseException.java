@@ -1,4 +1,4 @@
-package kr.sproutfx.oauth.backoffice.common.base;
+package kr.sproutfx.oauth.backoffice.common.exception;
 
 import org.springframework.http.HttpStatus;
 

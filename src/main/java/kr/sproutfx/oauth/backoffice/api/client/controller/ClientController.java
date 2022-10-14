@@ -4,12 +4,24 @@ import kr.sproutfx.oauth.backoffice.api.client.entity.Client;
 import kr.sproutfx.oauth.backoffice.api.client.enumeration.ClientStatus;
 import kr.sproutfx.oauth.backoffice.api.client.service.ClientCommandService;
 import kr.sproutfx.oauth.backoffice.api.client.service.ClientQueryService;
-import kr.sproutfx.oauth.backoffice.common.dto.StructuredBody;
+import kr.sproutfx.oauth.backoffice.common.dto.response.BaseResponse;
+import kr.sproutfx.oauth.backoffice.common.dto.response.StructuredResponseEntity;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
@@ -17,9 +29,9 @@ import java.util.UUID;
 import static java.util.stream.Collectors.toList;
 
 @RestController
-@RequestMapping("/clients")
+@RequestMapping(value = ClientController.REQUEST_PATH)
 public class ClientController {
-
+    public static final String REQUEST_PATH = "/clients";
     private final ClientCommandService clientCommandService;
     private final ClientQueryService clientQueryService;
 
@@ -29,29 +41,27 @@ public class ClientController {
     }
 
     @GetMapping
-    public StructuredBody findAll() {
-
-        return StructuredBody.content(this.clientQueryService.findAll().stream().map(ClientResponse::new).collect(toList()));
+    public StructuredResponseEntity findAll() {
+        return StructuredResponseEntity.succeeded(this.clientQueryService.findAll().stream().map(ClientResponse::new).collect(toList()));
     }
 
     @GetMapping(value = "/{id}")
-    public StructuredBody findById(@PathVariable("id") UUID id) {
-
-        return StructuredBody.content(new ClientResponse(this.clientQueryService.findById(id)));
+    public StructuredResponseEntity findById(@PathVariable("id") UUID id) {
+        return StructuredResponseEntity.succeeded(new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @PostMapping
-    public StructuredBody create(@RequestBody @Validated ClientCreateRequest clientCreateRequest, Errors errors) {
+    public StructuredResponseEntity create(@RequestBody @Validated ClientCreateRequest clientCreateRequest, UriComponentsBuilder uriComponentsBuilder, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
         UUID id = this.clientCommandService.create(clientCreateRequest.getName(), clientCreateRequest.getDescription());
 
-        return StructuredBody.content(new ClientResponse(this.clientQueryService.findById(id)));
+        return StructuredResponseEntity.created(uriComponentsBuilder.path(String.format("%s/%s", REQUEST_PATH, id)).build().toUri(), new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @PutMapping(value = "/{id}")
-    public StructuredBody update(@PathVariable UUID id, @RequestBody @Validated ClientUpdateRequest clientUpdateRequest, Errors errors) {
+    public StructuredResponseEntity update(@PathVariable UUID id, @RequestBody @Validated ClientUpdateRequest clientUpdateRequest, Errors errors) {
 
         if (errors.hasErrors()) throw new InvalidArgumentException();
 
@@ -60,23 +70,23 @@ public class ClientController {
 
         this.clientCommandService.update(id, name, description);
 
-        return StructuredBody.content(new ClientResponse(this.clientQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @PatchMapping("/{id}/status")
-    public StructuredBody updateStatus(@PathVariable UUID id, @RequestBody ClientStatusUpdateRequest clientStatusUpdateRequest) {
+    public StructuredResponseEntity updateStatus(@PathVariable UUID id, @RequestBody ClientStatusUpdateRequest clientStatusUpdateRequest) {
 
         this.clientCommandService.updateStatus(id, clientStatusUpdateRequest.getClientStatus());
 
-        return StructuredBody.content(new ClientResponse(this.clientQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(new ClientResponse(this.clientQueryService.findById(id)));
     }
 
     @DeleteMapping(value = "/{id}")
-    public StructuredBody delete(@PathVariable UUID id) {
+    public StructuredResponseEntity delete(@PathVariable UUID id) {
 
         this.clientCommandService.deleteById(id);
 
-        return StructuredBody.content(new ClientDeleteResponse(id));
+        return StructuredResponseEntity.deleted();
     }
 
     @Data
@@ -99,8 +109,8 @@ public class ClientController {
         private ClientStatus clientStatus;
     }
 
-    @Data
-    private static class ClientResponse {
+    @Getter @Setter
+    private static class ClientResponse extends BaseResponse {
         private final UUID id;
         private final String code;
         private final String name;
@@ -113,15 +123,6 @@ public class ClientController {
             this.name = client.getName();
             this.status = (client.getStatus() == null) ? null : client.getStatus().toString();
             this.description = client.getDescription();
-        }
-    }
-
-    @Data
-    private static class ClientDeleteResponse {
-        private final UUID deletedClientId;
-
-        public ClientDeleteResponse(UUID id) {
-            this.deletedClientId = id;
         }
     }
 }

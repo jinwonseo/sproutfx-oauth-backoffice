@@ -1,10 +1,11 @@
 package kr.sproutfx.oauth.backoffice.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import kr.sproutfx.oauth.backoffice.common.base.BaseException;
+import kr.sproutfx.oauth.backoffice.common.exception.BaseException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 
+@Deprecated
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StructuredBody {
     private boolean succeeded;

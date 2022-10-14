@@ -57,18 +57,18 @@ public class RestControllerAspect {
 
         Map<String, Object> body = (bodyInputStream.available() != 0) ? objectMapper.readValue(bodyInputStream, Map.class) : null;
 
-        Object responseBody = null;
+        Object response = null;
 
         long startTimeMillis = System.currentTimeMillis();
         try {
-            responseBody = proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
-            return responseBody;
+            response = proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
+            return response;
         } catch (Throwable e) {
             throw new RuntimeException(e);
         } finally {
             long endTimeMillis = System.currentTimeMillis();
             long duration = endTimeMillis - startTimeMillis;
-            logger.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(new StructuredRestControllerLog(method, uri, headers, params, body, duration, responseBody)));
+            logger.debug(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(new StructuredRestControllerLog(method, uri, headers, params, body, duration, response)));
         }
     }
 
@@ -86,19 +86,19 @@ public class RestControllerAspect {
         private final Map<String, String[]> requestParams;
         @JsonProperty(value = "request-body")
         private Map<String, Object> requestBody;
-        @JsonProperty(value = "response-body")
-        private final Object responseBody;
+        @JsonProperty(value = "response")
+        private final Object response;
         @JsonProperty(value = "duration")
         private final String duration;
 
-        public StructuredRestControllerLog(String requestMethod, String requestUri, Map<String, List<String>> requestHeaders, Map<String, String[]> requestParams, Map<String, Object> requestBody, Long duration, Object responseBody) {
+        public StructuredRestControllerLog(String requestMethod, String requestUri, Map<String, List<String>> requestHeaders, Map<String, String[]> requestParams, Map<String, Object> requestBody, Long duration, Object response) {
             this.requestMethod = requestMethod;
             this.requestUri = requestUri;
             this.requestHeaders = requestHeaders;
             this.requestParams = requestParams;
             this.requestBody = requestBody;
             this.duration = String.format("%d ms", duration);
-            this.responseBody = responseBody;
+            this.response = response;
         }
     }
 }
