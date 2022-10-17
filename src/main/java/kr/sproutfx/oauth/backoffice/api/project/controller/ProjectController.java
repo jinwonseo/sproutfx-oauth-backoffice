@@ -5,9 +5,9 @@ import kr.sproutfx.oauth.backoffice.api.project.entity.Project;
 import kr.sproutfx.oauth.backoffice.api.project.enumeration.ProjectStatus;
 import kr.sproutfx.oauth.backoffice.api.project.service.ProjectCommandService;
 import kr.sproutfx.oauth.backoffice.api.project.service.ProjectQueryService;
-import kr.sproutfx.oauth.backoffice.common.dto.response.BaseResponse;
-import kr.sproutfx.oauth.backoffice.common.dto.response.StructuredResponseEntity;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
+import kr.sproutfx.oauth.backoffice.common.response.base.BaseResponse;
+import kr.sproutfx.oauth.backoffice.common.response.entity.StructuredResponseEntity;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -100,14 +100,13 @@ public class ProjectController {
 
     @Getter @Setter
     private static class ProjectWithClientsResponse extends BaseResponse {
-        private final UUID id;
         private final String name;
         private final String status;
         private final String description;
         private final List<ClientResponse> clients;
 
         public ProjectWithClientsResponse(Project project) {
-            this.id = project.getId();
+            super(project.getId());
             this.name = project.getName();
             this.status = project.getStatus().toString();
             this.description = project.getDescription();
@@ -117,13 +116,12 @@ public class ProjectController {
 
     @Getter @Setter
     private static class ProjectResponse extends BaseResponse {
-        private final UUID id;
         private final String name;
         private final String status;
         private final String description;
 
         public ProjectResponse(Project project) {
-            this.id = project.getId();
+            super(project.getId());
             this.name = project.getName();
             this.status = project.getStatus().toString();
             this.description = project.getDescription();
@@ -132,14 +130,13 @@ public class ProjectController {
 
     @Getter @Setter
     private static class ClientResponse extends BaseResponse {
-        private final UUID id;
         private final String code;
         private final String name;
         private final String status;
         private final String description;
 
         public ClientResponse(Client client) {
-            this.id = client.getId();
+            super(client.getId());
             this.code = client.getCode();
             this.name = client.getName();
             this.status = client.getStatus().toString();

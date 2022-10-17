@@ -1,27 +1,26 @@
-package kr.sproutfx.oauth.backoffice.common.dto.response.structure;
+package kr.sproutfx.oauth.backoffice.common.response.body;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import kr.sproutfx.oauth.backoffice.common.exception.BaseException;
+import kr.sproutfx.oauth.backoffice.common.response.base.BaseResponseBody;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ErrorResponseBodyStructure extends BaseResponseBodyStructure {
-    private final Boolean succeeded = Boolean.FALSE;
-    private final Error error;
+public class ErrorResponseBody extends BaseResponseBody {
+    private Error error;
 
-    private ErrorResponseBodyStructure(BaseException exception) {
+    private ErrorResponseBody() { }
+
+    private ErrorResponseBody(BaseException exception) {
+        super(Boolean.FALSE);
         this.error = new Error(exception.getValue(), exception.getReason());
-    }
-
-    public Boolean isSucceeded() {
-        return succeeded;
     }
 
     public Error getError() {
         return error;
     }
 
-    public static ErrorResponseBodyStructure error(BaseException exception) {
-        return new ErrorResponseBodyStructure(exception);
+    public static ErrorResponseBody error(BaseException exception) {
+        return new ErrorResponseBody(exception);
     }
 
     public static class Error {
