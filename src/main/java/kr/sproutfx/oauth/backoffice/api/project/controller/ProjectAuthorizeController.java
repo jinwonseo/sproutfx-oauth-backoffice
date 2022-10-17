@@ -1,8 +1,8 @@
 package kr.sproutfx.oauth.backoffice.api.project.controller;
 
-import kr.sproutfx.oauth.backoffice.api.project.entity.Project;
+import kr.sproutfx.oauth.backoffice.api.project.dto.response.ProjectResponse;
 import kr.sproutfx.oauth.backoffice.api.project.service.ProjectQueryService;
-import lombok.Data;
+import kr.sproutfx.oauth.backoffice.common.response.entity.StructuredResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/de7e284c-38ef-46fb-b911-12ad2faf8623/projects")
+@RequestMapping(value = ProjectAuthorizeController.REQUEST_PATH)
 public class ProjectAuthorizeController {
+    public static final String REQUEST_PATH = "/de7e284c-38ef-46fb-b911-12ad2faf8623/projects";
     private final ProjectQueryService projectQueryService;
 
     public ProjectAuthorizeController(ProjectQueryService projectQueryService) {
@@ -20,22 +21,9 @@ public class ProjectAuthorizeController {
     }
 
     @GetMapping(value = "/{id}")
-    public ProjectResponse findById(@PathVariable UUID id) {
-        return new ProjectResponse(this.projectQueryService.findById(id));
-    }
-
-    @Data
-    private static class ProjectResponse {
-        private final UUID id;
-        private final String name;
-        private final String status;
-        private final String description;
-
-        public ProjectResponse(Project project) {
-            this.id = project.getId();
-            this.name = project.getName();
-            this.status = project.getStatus().toString();
-            this.description = project.getDescription();
-        }
+    public StructuredResponseEntity findById(@PathVariable UUID id) {
+        return StructuredResponseEntity.succeeded(
+                new ProjectResponse(this.projectQueryService.findById(id))
+        );
     }
 }
