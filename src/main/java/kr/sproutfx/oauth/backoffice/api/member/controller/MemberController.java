@@ -4,9 +4,9 @@ import kr.sproutfx.oauth.backoffice.api.member.entity.Member;
 import kr.sproutfx.oauth.backoffice.api.member.enumeration.MemberStatus;
 import kr.sproutfx.oauth.backoffice.api.member.service.MemberCommandService;
 import kr.sproutfx.oauth.backoffice.api.member.service.MemberQueryService;
-import kr.sproutfx.oauth.backoffice.common.dto.response.BaseResponse;
-import kr.sproutfx.oauth.backoffice.common.dto.response.StructuredResponseEntity;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
+import kr.sproutfx.oauth.backoffice.common.response.base.BaseResponse;
+import kr.sproutfx.oauth.backoffice.common.response.entity.StructuredResponseEntity;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -142,7 +142,6 @@ public class MemberController {
 
     @Getter @Setter
     private static class MemberResponse extends BaseResponse {
-        private final UUID id;
         private final String email;
         private final String name;
         private final LocalDateTime passwordExpired;
@@ -150,7 +149,7 @@ public class MemberController {
         private final String description;
 
         public MemberResponse(Member member) {
-            this.id = member.getId();
+            super(member.getId());
             this.email = member.getEmail();
             this.name = member.getName();
             this.passwordExpired = member.getPasswordExpired();

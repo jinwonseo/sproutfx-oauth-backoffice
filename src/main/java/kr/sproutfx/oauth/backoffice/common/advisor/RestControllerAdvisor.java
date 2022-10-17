@@ -1,8 +1,8 @@
 package kr.sproutfx.oauth.backoffice.common.advisor;
 
-import kr.sproutfx.oauth.backoffice.common.dto.response.StructuredResponseEntity;
 import kr.sproutfx.oauth.backoffice.common.exception.BaseException;
 import kr.sproutfx.oauth.backoffice.common.exception.UnhandledException;
+import kr.sproutfx.oauth.backoffice.common.response.entity.StructuredResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

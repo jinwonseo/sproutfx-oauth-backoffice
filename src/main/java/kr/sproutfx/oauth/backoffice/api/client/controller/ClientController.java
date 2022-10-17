@@ -4,9 +4,9 @@ import kr.sproutfx.oauth.backoffice.api.client.entity.Client;
 import kr.sproutfx.oauth.backoffice.api.client.enumeration.ClientStatus;
 import kr.sproutfx.oauth.backoffice.api.client.service.ClientCommandService;
 import kr.sproutfx.oauth.backoffice.api.client.service.ClientQueryService;
-import kr.sproutfx.oauth.backoffice.common.dto.response.BaseResponse;
-import kr.sproutfx.oauth.backoffice.common.dto.response.StructuredResponseEntity;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
+import kr.sproutfx.oauth.backoffice.common.response.base.BaseResponse;
+import kr.sproutfx.oauth.backoffice.common.response.entity.StructuredResponseEntity;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -111,14 +111,13 @@ public class ClientController {
 
     @Getter @Setter
     private static class ClientResponse extends BaseResponse {
-        private final UUID id;
         private final String code;
         private final String name;
         private final String status;
         private final String description;
 
         public ClientResponse(Client client) {
-            this.id = client.getId();
+            super(client.getId());
             this.code = client.getCode();
             this.name = client.getName();
             this.status = (client.getStatus() == null) ? null : client.getStatus().toString();
