@@ -1,15 +1,13 @@
 package kr.sproutfx.oauth.backoffice.configuration.web.interceptor;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
 @ConfigurationProperties(prefix = "sproutfx.web.interceptor.provider-validate-interceptor")
 public class ProviderValidateInterceptorProperties {
     private String validationHeader;
-    private String validationValue;
+    private String validationSecret;
     private List<String> patterns;
 
     public String getValidationHeader() {
@@ -20,12 +18,12 @@ public class ProviderValidateInterceptorProperties {
         this.validationHeader = validationHeader;
     }
 
-    public String getValidationValue() {
-        return validationValue;
+    public String getValidationSecret() {
+        return validationSecret;
     }
 
-    public void setValidationValue(String validationValue) {
-        this.validationValue = validationValue;
+    public void setValidationSecret(String validationSecret) {
+        this.validationSecret = validationSecret;
     }
 
     public List<String> getPatterns() {
