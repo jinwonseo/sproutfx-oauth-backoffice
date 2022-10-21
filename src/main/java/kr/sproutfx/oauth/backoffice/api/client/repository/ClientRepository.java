@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,4 +15,7 @@ public interface ClientRepository extends JpaRepository<Client, UUID>, JpaSpecif
 
     @Query(value = "SELECT distinct c FROM Client c left join fetch c.project p WHERE c.secret = ?1")
     Optional<Client> findBySecretWithProject(String secret);
+
+    @Query(value = "SELECT distinct c FROM Client c left join fetch c.project p")
+    List<Client> findAllWithProject();
 }

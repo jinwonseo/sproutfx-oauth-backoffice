@@ -20,7 +20,7 @@ public class ClientQueryService {
     }
 
     public List<Client> findAll() {
-        return this.clientRepository.findAll();
+        return this.clientRepository.findAllWithProject();
     }
 
     public Client findById(UUID id) {

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = ResourceController.REQUEST_PATH)
@@ -41,6 +42,15 @@ public class ResourceController {
 
         return StructuredResponseEntity.succeeded(
                 new ProjectResponse(this.projectQueryService.findById(id))
+        );
+    }
+
+    @GetMapping(value = "/clients")
+    public StructuredResponseEntity clientFindAll(@PathVariable(value = "resource-server-id") UUID resourceServerId) {
+        if (!resourceServerProperties.getId().equals(resourceServerId)) throw new InvalidResourceServerId();
+
+        return StructuredResponseEntity.succeeded(
+                this.clientQueryService.findAll().stream().map(ClientResponse::new).collect(Collectors.toList())
         );
     }
 
