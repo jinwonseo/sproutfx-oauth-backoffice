@@ -2,7 +2,7 @@ package kr.sproutfx.oauth.backoffice.api.project.service;
 
 import kr.sproutfx.oauth.backoffice.api.project.entity.Project;
 import kr.sproutfx.oauth.backoffice.api.project.exception.ProjectNotFoundException;
-import kr.sproutfx.oauth.backoffice.api.project.repository.ProjectRepository;
+import kr.sproutfx.oauth.backoffice.api.project.repository.ProjectQueryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,21 +12,21 @@ import java.util.UUID;
 @Service
 @Transactional(readOnly = true)
 public class ProjectQueryService {
-    private final ProjectRepository projectRepository;
+    private final ProjectQueryRepository projectQueryRepository;
 
-    public ProjectQueryService(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
+    public ProjectQueryService(ProjectQueryRepository projectQueryRepository) {
+        this.projectQueryRepository = projectQueryRepository;
     }
 
     public List<Project> findAll() {
-        return this.projectRepository.findAll();
+        return this.projectQueryRepository.findAllWithClients();
     }
 
     public List<Project> findAllWithClients() {
-        return this.projectRepository.findAllWithClients();
+        return this.projectQueryRepository.findAllWithClients();
     }
 
     public Project findById(UUID id) {
-        return this.projectRepository.findByIdWithClients(id).orElseThrow(ProjectNotFoundException::new);
+        return this.projectQueryRepository.findByIdWithClients(id).orElseThrow(ProjectNotFoundException::new);
     }
 }
