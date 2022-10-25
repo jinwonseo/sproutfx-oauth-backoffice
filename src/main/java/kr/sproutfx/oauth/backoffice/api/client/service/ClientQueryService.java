@@ -2,8 +2,7 @@ package kr.sproutfx.oauth.backoffice.api.client.service;
 
 import kr.sproutfx.oauth.backoffice.api.client.entity.Client;
 import kr.sproutfx.oauth.backoffice.api.client.exception.ClientNotFoundException;
-import kr.sproutfx.oauth.backoffice.api.client.repository.ClientRepository;
-import kr.sproutfx.oauth.backoffice.api.client.repository.specification.ClientSpecification;
+import kr.sproutfx.oauth.backoffice.api.client.repository.ClientQueryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,33 +12,25 @@ import java.util.UUID;
 @Service
 @Transactional(readOnly = true)
 public class ClientQueryService {
-    private final ClientRepository clientRepository;
+    private final ClientQueryRepository clientQueryRepository;
 
-    public ClientQueryService(ClientRepository clientRepository) {
-        this.clientRepository = clientRepository;
+    public ClientQueryService(ClientQueryRepository clientQueryRepository) {
+        this.clientQueryRepository = clientQueryRepository;
     }
 
     public List<Client> findAll() {
-        return this.clientRepository.findAllWithProject();
+        return this.clientQueryRepository.findAllWithProject();
     }
 
     public Client findById(UUID id) {
-        return this.clientRepository.findById(id).orElseThrow(ClientNotFoundException::new);
+        return this.clientQueryRepository.findByIdWithProject(id).orElseThrow(ClientNotFoundException::new);
     }
 
     public Client findByCodeWithProject(String code) {
-        return this.clientRepository.findByCodeWithProject(code).orElseThrow(ClientNotFoundException::new);
+        return this.clientQueryRepository.findByCodeWithProject(code).orElseThrow(ClientNotFoundException::new);
     }
 
     public Client findBySecretWithProject(String secret) {
-        return this.clientRepository.findBySecretWithProject(secret).orElseThrow(ClientNotFoundException::new);
-    }
-
-    public Client findByCode(String code) {
-        return this.clientRepository.findOne(ClientSpecification.equalCode(code)).orElseThrow(ClientNotFoundException::new);
-    }
-
-    public Client findBySecret(String secret) {
-        return this.clientRepository.findOne(ClientSpecification.equalSecret(secret)).orElseThrow(ClientNotFoundException::new);
+        return this.clientQueryRepository.findBySecretWithProject(secret).orElseThrow(ClientNotFoundException::new);
     }
 }
