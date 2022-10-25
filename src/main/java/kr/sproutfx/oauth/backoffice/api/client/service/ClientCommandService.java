@@ -4,7 +4,7 @@ import kr.sproutfx.oauth.backoffice.api.client.entity.Client;
 import kr.sproutfx.oauth.backoffice.api.client.enumeration.ClientStatus;
 import kr.sproutfx.oauth.backoffice.api.client.enumeration.ClientType;
 import kr.sproutfx.oauth.backoffice.api.client.exception.ClientNotFoundException;
-import kr.sproutfx.oauth.backoffice.api.client.repository.ClientRepository;
+import kr.sproutfx.oauth.backoffice.api.client.repository.ClientCommandRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -16,15 +16,15 @@ import java.util.UUID;
 @Service
 @Transactional
 public class ClientCommandService {
-    private final ClientRepository clientRepository;
+    private final ClientCommandRepository clientCommandRepository;
 
-    public ClientCommandService(ClientRepository clientRepository) {
-        this.clientRepository = clientRepository;
+    public ClientCommandService(ClientCommandRepository clientCommandRepository) {
+        this.clientCommandRepository = clientCommandRepository;
     }
 
     public UUID create(String name, String description) {
 
-        Client persistenceClient = this.clientRepository.save(
+        Client persistenceClient = this.clientCommandRepository.save(
             Client.builder()
                 .code(UUID.randomUUID().toString().replace("-", StringUtils.EMPTY))
                 .name(name)
@@ -41,22 +41,22 @@ public class ClientCommandService {
 
     public void update(UUID id, String name, String description) {
 
-        Client persistenceClient = this.clientRepository.findById(id).orElseThrow(ClientNotFoundException::new);
+        Client persistenceClient = this.clientCommandRepository.findById(id).orElseThrow(ClientNotFoundException::new);
 
         persistenceClient.update(name, description);
     }
 
     public void updateStatus(UUID id, ClientStatus clientStatus) {
 
-        Client persistenceClient = this.clientRepository.findById(id).orElseThrow(ClientNotFoundException::new);
+        Client persistenceClient = this.clientCommandRepository.findById(id).orElseThrow(ClientNotFoundException::new);
 
         persistenceClient.updateStatus(clientStatus);
     }
 
     public void deleteById(UUID id) {
 
-        Client persistenceClient = this.clientRepository.findById(id).orElseThrow(ClientNotFoundException::new);
+        Client persistenceClient = this.clientCommandRepository.findById(id).orElseThrow(ClientNotFoundException::new);
 
-        this.clientRepository.delete(persistenceClient);
+        this.clientCommandRepository.delete(persistenceClient);
     }
 }
