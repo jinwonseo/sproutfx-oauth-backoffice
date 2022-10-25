@@ -28,7 +28,7 @@ public class ClientCommandService {
             Client.builder()
                 .code(UUID.randomUUID().toString().replace("-", StringUtils.EMPTY))
                 .name(name)
-                .type(ClientType.RESOURCE_SERVER)
+                .type(ClientType.APPLICATION_SERVER)
                 .secret(Base64Utils.encodeToUrlSafeString(RandomStringUtils.randomAlphanumeric(32).getBytes()))
                 .status(ClientStatus.PENDING_APPROVAL)
                 .accessTokenSecret(RandomStringUtils.randomAlphanumeric(96))
