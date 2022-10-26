@@ -45,19 +45,31 @@ public class ProjectController {
     @GetMapping
     public StructuredResponseEntity findAll() {
 
-        return StructuredResponseEntity.succeeded(this.projectQueryService.findAll().stream().map(ProjectResponse::new).collect(toList()));
+        return StructuredResponseEntity.succeeded(
+                this.projectQueryService.findAll()
+                        .stream()
+                        .map(ProjectResponse::new)
+                        .collect(toList())
+        );
     }
 
     @GetMapping(value = "/clients")
     public StructuredResponseEntity findAllWithClients() {
 
-        return StructuredResponseEntity.succeeded(this.projectQueryService.findAllWithClients().stream().map(ProjectWithClientsResponse::new).collect(toList()));
+        return StructuredResponseEntity.succeeded(
+                this.projectQueryService.findAllWithClients()
+                        .stream()
+                        .map(ProjectWithClientsResponse::new)
+                        .collect(toList())
+        );
     }
 
     @GetMapping("/{id}")
     public StructuredResponseEntity findById(@PathVariable UUID id) {
 
-        return StructuredResponseEntity.succeeded(new ProjectResponse(this.projectQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(
+                new ProjectResponse(this.projectQueryService.findById(id))
+        );
     }
 
     @PostMapping
@@ -67,7 +79,10 @@ public class ProjectController {
 
         UUID id = this.projectCommandService.create(projectCreateRequest.getName(), projectCreateRequest.getDescription());
 
-        return StructuredResponseEntity.created(uriComponentsBuilder.path(String.format("%s/%s", REQUEST_PATH, id)).build().toUri(), new ProjectResponse(this.projectQueryService.findById(id)));
+        return StructuredResponseEntity.created(
+                uriComponentsBuilder.path(String.format("%s/%s", REQUEST_PATH, id)).build().toUri(),
+                new ProjectResponse(this.projectQueryService.findById(id))
+        );
     }
 
     @PutMapping("/{id}")
@@ -77,7 +92,9 @@ public class ProjectController {
 
         this.projectCommandService.update(id, projectUpdateRequest.getName(), projectUpdateRequest.getDescription());
 
-        return StructuredResponseEntity.succeeded(new ProjectResponse(this.projectQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(
+                new ProjectResponse(this.projectQueryService.findById(id))
+        );
     }
 
     @PatchMapping("/{id}/status")
@@ -87,7 +104,9 @@ public class ProjectController {
 
         this.projectCommandService.updateStatus(id, projectStatusUpdateRequest.getProjectStatus());
 
-        return StructuredResponseEntity.succeeded(new ProjectResponse(this.projectQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(
+                new ProjectResponse(this.projectQueryService.findById(id))
+        );
     }
 
     @DeleteMapping("/{id}")
