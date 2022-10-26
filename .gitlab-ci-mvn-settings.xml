@@ -6,6 +6,9 @@
             <id>private-nexus3-maven</id>
             <username>${NEXUS3_USERNAME}</username>
             <password>${NEXUS3_PASSWORD}</password>
+            <configuration>
+                <timeout>6000</timeout> <!-- milliseconds -->
+            </configuration>
         </server>
         <!-- private gitlab package registry -->
         <server>
@@ -17,6 +20,7 @@
                         <value>${env.CI_JOB_TOKEN}</value>
                     </property>
                 </httpHeaders>
+                <timeout>6000</timeout> <!-- milliseconds -->
             </configuration>
         </server>
     </servers>
