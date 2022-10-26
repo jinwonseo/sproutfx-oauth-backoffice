@@ -42,12 +42,19 @@ public class ClientController {
 
     @GetMapping
     public StructuredResponseEntity findAll() {
-        return StructuredResponseEntity.succeeded(this.clientQueryService.findAll().stream().map(ClientResponse::new).collect(toList()));
+        return StructuredResponseEntity.succeeded(
+                this.clientQueryService.findAll()
+                        .stream()
+                        .map(ClientResponse::new)
+                        .collect(toList())
+        );
     }
 
     @GetMapping(value = "/{id}")
     public StructuredResponseEntity findById(@PathVariable("id") UUID id) {
-        return StructuredResponseEntity.succeeded(new ClientResponse(this.clientQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(
+                new ClientResponse(this.clientQueryService.findById(id))
+        );
     }
 
     @PostMapping
@@ -57,7 +64,10 @@ public class ClientController {
 
         UUID id = this.clientCommandService.create(clientCreateRequest.getName(), clientCreateRequest.getDescription());
 
-        return StructuredResponseEntity.created(uriComponentsBuilder.path(String.format("%s/%s", REQUEST_PATH, id)).build().toUri(), new ClientResponse(this.clientQueryService.findById(id)));
+        return StructuredResponseEntity.created(
+                uriComponentsBuilder.path(String.format("%s/%s", REQUEST_PATH, id)).build().toUri(),
+                new ClientResponse(this.clientQueryService.findById(id))
+        );
     }
 
     @PutMapping(value = "/{id}")
@@ -70,7 +80,9 @@ public class ClientController {
 
         this.clientCommandService.update(id, name, description);
 
-        return StructuredResponseEntity.succeeded(new ClientResponse(this.clientQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(
+                new ClientResponse(this.clientQueryService.findById(id))
+        );
     }
 
     @PatchMapping("/{id}/status")
@@ -78,7 +90,9 @@ public class ClientController {
 
         this.clientCommandService.updateStatus(id, clientStatusUpdateRequest.getClientStatus());
 
-        return StructuredResponseEntity.succeeded(new ClientResponse(this.clientQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(
+                new ClientResponse(this.clientQueryService.findById(id))
+        );
     }
 
     @DeleteMapping(value = "/{id}")

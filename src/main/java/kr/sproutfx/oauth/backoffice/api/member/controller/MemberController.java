@@ -44,12 +44,19 @@ public class MemberController {
 
     @GetMapping
     public StructuredResponseEntity findAll() {
-        return StructuredResponseEntity.succeeded(this.memberQueryService.findAll().stream().map(MemberResponse::new).collect(toList()));
+        return StructuredResponseEntity.succeeded(
+                this.memberQueryService.findAll()
+                        .stream()
+                        .map(MemberResponse::new)
+                        .collect(toList())
+        );
     }
 
     @GetMapping("/{id}")
     public StructuredResponseEntity findById(@PathVariable UUID id) {
-        return StructuredResponseEntity.succeeded(new MemberResponse(this.memberQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(
+                new MemberResponse(this.memberQueryService.findById(id))
+        );
     }
 
     @PostMapping
@@ -59,7 +66,10 @@ public class MemberController {
 
         UUID id = this.memberCommandService.create(memberCreateRequest.getEmail(), memberCreateRequest.getName(), memberCreateRequest.getPassword(), memberCreateRequest.getDescription());
 
-        return StructuredResponseEntity.created(uriComponentsBuilder.path(String.format("%s/%s", REQUEST_PATH, id)).build().toUri(), new MemberResponse(this.memberQueryService.findById(id)));
+        return StructuredResponseEntity.created(
+                uriComponentsBuilder.path(String.format("%s/%s", REQUEST_PATH, id)).build().toUri(),
+                new MemberResponse(this.memberQueryService.findById(id))
+        );
     }
 
     @PutMapping("/{id}")
@@ -73,7 +83,9 @@ public class MemberController {
 
         this.memberCommandService.update(id, email, name, description);
 
-        return StructuredResponseEntity.succeeded(new MemberResponse(this.memberQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(
+                new MemberResponse(this.memberQueryService.findById(id))
+        );
     }
 
     @PatchMapping(value = "/{id}/status")
@@ -85,7 +97,9 @@ public class MemberController {
 
         this.memberCommandService.updateStatus(id, memberStatus);
 
-        return StructuredResponseEntity.succeeded(new MemberResponse(this.memberQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(
+                new MemberResponse(this.memberQueryService.findById(id))
+        );
     }
 
     @PatchMapping(value = "/{email}/password")
@@ -98,7 +112,9 @@ public class MemberController {
 
         UUID id = this.memberCommandService.updatePassword(email, currentPassword, newPassword);
 
-        return StructuredResponseEntity.succeeded(new MemberResponse(this.memberQueryService.findById(id)));
+        return StructuredResponseEntity.succeeded(
+                new MemberResponse(this.memberQueryService.findById(id))
+        );
     }
 
     @DeleteMapping("/{id}")
