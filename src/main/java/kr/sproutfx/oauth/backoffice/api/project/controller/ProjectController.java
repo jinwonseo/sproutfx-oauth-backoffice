@@ -1,16 +1,13 @@
 package kr.sproutfx.oauth.backoffice.api.project.controller;
 
-import kr.sproutfx.oauth.backoffice.api.client.entity.Client;
-import kr.sproutfx.oauth.backoffice.api.project.entity.Project;
-import kr.sproutfx.oauth.backoffice.api.project.enumeration.ProjectStatus;
+import kr.sproutfx.oauth.backoffice.api.project.dto.request.ProjectCreateRequest;
+import kr.sproutfx.oauth.backoffice.api.project.dto.request.ProjectStatusUpdateRequest;
+import kr.sproutfx.oauth.backoffice.api.project.dto.request.ProjectUpdateRequest;
+import kr.sproutfx.oauth.backoffice.api.project.dto.response.ProjectResponse;
 import kr.sproutfx.oauth.backoffice.api.project.service.ProjectCommandService;
 import kr.sproutfx.oauth.backoffice.api.project.service.ProjectQueryService;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
-import kr.sproutfx.oauth.backoffice.common.response.base.BaseResponse;
 import kr.sproutfx.oauth.backoffice.common.response.entity.StructuredResponseEntity;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.validation.constraints.NotBlank;
-import java.util.List;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
@@ -46,20 +41,9 @@ public class ProjectController {
     public StructuredResponseEntity findAll() {
 
         return StructuredResponseEntity.succeeded(
-                this.projectQueryService.findAll()
-                        .stream()
-                        .map(ProjectResponse::new)
-                        .collect(toList())
-        );
-    }
-
-    @GetMapping(value = "/clients")
-    public StructuredResponseEntity findAllWithClients() {
-
-        return StructuredResponseEntity.succeeded(
                 this.projectQueryService.findAllWithClients()
                         .stream()
-                        .map(ProjectWithClientsResponse::new)
+                        .map(ProjectResponse::new)
                         .collect(toList())
         );
     }
@@ -115,70 +99,5 @@ public class ProjectController {
         this.projectCommandService.delete(id);
 
         return StructuredResponseEntity.deleted();
-    }
-
-    @Getter @Setter
-    private static class ProjectWithClientsResponse extends BaseResponse {
-        private final String name;
-        private final String status;
-        private final String description;
-        private final List<ClientResponse> clients;
-
-        public ProjectWithClientsResponse(Project project) {
-            super(project.getId());
-            this.name = project.getName();
-            this.status = project.getStatus().toString();
-            this.description = project.getDescription();
-            this.clients = project.getClients().stream().map(ClientResponse::new).collect(toList());
-        }
-    }
-
-    @Getter @Setter
-    private static class ProjectResponse extends BaseResponse {
-        private final String name;
-        private final String status;
-        private final String description;
-
-        public ProjectResponse(Project project) {
-            super(project.getId());
-            this.name = project.getName();
-            this.status = project.getStatus().toString();
-            this.description = project.getDescription();
-        }
-    }
-
-    @Getter @Setter
-    private static class ClientResponse extends BaseResponse {
-        private final String code;
-        private final String name;
-        private final String status;
-        private final String description;
-
-        public ClientResponse(Client client) {
-            super(client.getId());
-            this.code = client.getCode();
-            this.name = client.getName();
-            this.status = client.getStatus().toString();
-            this.description = client.getDescription();
-        }
-    }
-
-    @Data
-    private static class ProjectCreateRequest {
-        @NotBlank
-        private String name;
-        private String description;
-    }
-
-    @Data
-    private static class ProjectUpdateRequest {
-        @NotBlank
-        private String name;
-        private String description;
-    }
-
-    @Data
-    private static class ProjectStatusUpdateRequest {
-        private ProjectStatus projectStatus;
     }
 }
