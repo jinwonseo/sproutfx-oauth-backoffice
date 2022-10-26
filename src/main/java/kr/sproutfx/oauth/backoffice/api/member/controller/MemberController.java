@@ -1,15 +1,15 @@
 package kr.sproutfx.oauth.backoffice.api.member.controller;
 
-import kr.sproutfx.oauth.backoffice.api.member.entity.Member;
+import kr.sproutfx.oauth.backoffice.api.member.dto.request.MemberCreateRequest;
+import kr.sproutfx.oauth.backoffice.api.member.dto.request.MemberPasswordUpdateRequest;
+import kr.sproutfx.oauth.backoffice.api.member.dto.request.MemberStatusUpdateRequest;
+import kr.sproutfx.oauth.backoffice.api.member.dto.request.MemberUpdateRequest;
+import kr.sproutfx.oauth.backoffice.api.member.dto.response.MemberResponse;
 import kr.sproutfx.oauth.backoffice.api.member.enumeration.MemberStatus;
 import kr.sproutfx.oauth.backoffice.api.member.service.MemberCommandService;
 import kr.sproutfx.oauth.backoffice.api.member.service.MemberQueryService;
 import kr.sproutfx.oauth.backoffice.common.exception.InvalidArgumentException;
-import kr.sproutfx.oauth.backoffice.common.response.base.BaseResponse;
 import kr.sproutfx.oauth.backoffice.common.response.entity.StructuredResponseEntity;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,9 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
@@ -123,54 +120,5 @@ public class MemberController {
         this.memberCommandService.deleteById(id);
 
         return StructuredResponseEntity.deleted();
-    }
-
-    @Data
-    private static class MemberCreateRequest {
-        @Email
-        private String email;
-        @NotBlank
-        private String name;
-        @NotBlank
-        private String password;
-        private String description;
-    }
-
-    @Data
-    private static class MemberUpdateRequest {
-        @Email
-        private String email;
-        @NotBlank
-        private String name;
-        private String description;
-    }
-
-    @Data
-    private static class MemberPasswordUpdateRequest {
-        private String currentPassword;
-        private String newPassword;
-    }
-
-    @Data
-    private static class MemberStatusUpdateRequest {
-        private MemberStatus memberStatus;
-    }
-
-    @Getter @Setter
-    private static class MemberResponse extends BaseResponse {
-        private final String email;
-        private final String name;
-        private final LocalDateTime passwordExpired;
-        private final String status;
-        private final String description;
-
-        public MemberResponse(Member member) {
-            super(member.getId());
-            this.email = member.getEmail();
-            this.name = member.getName();
-            this.passwordExpired = member.getPasswordExpired();
-            this.status = (member.getStatus() == null) ? null : member.getStatus().toString();
-            this.description = member.getDescription();
-        }
     }
 }
