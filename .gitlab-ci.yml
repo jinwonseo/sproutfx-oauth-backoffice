@@ -27,14 +27,12 @@ maven-build:
     paths:
       - target/*.jar
     expire_in: 10 min
-  retry: 2
 
 maven-test:
   image: maven:3.6.3-openjdk-11-slim
   stage: maven-test
   script:
     - mvn $MAVEN_CLI_OPTS test
-  retry: 2
 
 docker-build:
   image: docker:20.10.18
